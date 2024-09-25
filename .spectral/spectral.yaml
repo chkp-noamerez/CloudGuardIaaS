@@ -1,0 +1,142 @@
+match_ignores:
+  ignores:
+    - match_line_text: admin_password * = "PLEASE ENTER ADMIN PASSWORD"*
+
+    # azure-templates ignores
+    - rule_id: AZURE015
+    - rule_id: AZURE053
+    - rule_id: AZURE072
+    - rule_id: AZURE068
+
+    # cgi-cft ignores
+    - rule_id: CLDFRM338
+    - rule_id: CLDFRM402
+    - rule_id: CLDFRM436
+    - rule_id: CLDFRM436B
+    - rule_id: CLDFRM440
+    - rule_id: CLDFRM446
+    - rule_id: CLDFRM450
+    - rule_id: CLDFRM451
+    - rule_id: CLDFRM461
+    - rule_id: CLDFRM476
+    - rule_id: CLDFRM404
+      path: aws/templates/deprecated/R80.30/management/r80.json
+    - rule_id: CLDFRM404
+      path: aws/templates/deprecated/R80.30/management/r7730-management.json
+    - rule_id: CLDFRM301
+      path: aws/templates/deprecated/R81/utils/copy-lambda-zip.yaml
+    - rule_id: CLDFRM301
+      path: aws/templates/deprecated/R80.40/utils/copy-lambda-zip.yaml
+    - rule_id: CLDFRM302
+      path: aws/templates/deprecated/R81/utils/copy-lambda-zip.yaml
+    - rule_id: CLDFRM302
+      path: aws/templates/deprecated/R80.40/utils/copy-lambda-zip.yaml
+    - rule_id: CLDFRM469
+      path: aws/templates/deprecated/R81/iam/cloudwatch-policy.yaml
+    - rule_id: CLDFRM469
+      path: aws/templates/deprecated/R80.40/iam/cloudwatch-policy.yaml
+    - rule_id: CLDFRM301
+      path: aws/templates/deprecated/R81/utils/copy-lambda-zip.yaml
+
+    #AZURE
+    - path: contrib/terraform/azure/vmss-new-vnet-with-peer/terraform.tfvars
+    - path: contrib/terraform-azure-gwlb/terraform.tfvars
+    - rule_id: TFAZUR275
+    - rule_id: TFAZUR234
+    - rule_id: TFAZUR233
+    - rule_id: TFAZUR232
+    - rule_id: TFAZUR231
+    - rule_id: TFAZUR230
+    - rule_id: TFAZUR229
+    - rule_id: TFAZUR228
+    - rule_id: TFAZUR227
+    - rule_id: TFAZUR226
+    - rule_id: TFAZUR225
+    - rule_id: TFAZUR224
+    - rule_id: TFAZUR223
+    - rule_id: TFAZUR222
+    - rule_id: TFAZUR221
+    - rule_id: TFAZUR220
+    - rule_id: TFAZUR219
+    - rule_id: TFAZUR218
+    - rule_id: TFAZUR217
+    - rule_id: TFAZUR216
+    - rule_id: TFAZUR215
+    - rule_id: TFAZUR214
+    - rule_id: TFAZUR213
+    - rule_id: TFAZUR212
+    - rule_id: TFAZUR109
+    - rule_id: TFAZUR106
+    - rule_id: TFAZUR066
+    #GCP
+    - rule_id: TFGCP332
+    - rule_id: TFGCP304
+    - rule_id: TFGCP303
+    - rule_id: TFGCP203
+    - rule_id: TFGCP209
+    - rule_id: TFGCP093
+    #AWS
+    - rule_id: TFAWS417
+      path: terraform/aws/tgw-gwlb/main.tf
+    - rule_id: TFAWS288
+    - rule_id: TFAWS105
+    - rule_id: TFAWS306
+    - rule_id: CLDFRM338
+    - rule_id: CLDFRM402
+    - rule_id: CLDFRM436
+    - rule_id: CLDFRM436B
+    - rule_id: CLDFRM440
+    - rule_id: CLDFRM446
+    - rule_id: CLDFRM450
+    - rule_id: CLDFRM451
+    - rule_id: CLDFRM461
+    - rule_id: CLDFRM476
+    - rule_id: CLDFRM404
+      path: deprecated/aws/templates/management-r80/r80.json
+    - rule_id: CLDFRM404
+      path: deprecated/aws/templates/management-r7730/r7730-management.json
+    - rule_id: ML_CONTE.*
+      path: src/spectral-engine/src/matching/pattern_testing\.rs
+    - rule_id: TFAWS223
+    - rule_id: TFAWS030
+    - rule_id: TFAWS028
+    - rule_id: TFAWS024
+    - rule_id: TFAWS023
+    - rule_id: TFAWS022
+    - rule_id: TFAWS021
+    - rule_id: TFAWS017
+    - rule_id: TFAWS013
+    - rule_id: TFAWS010
+    - rule_id: TFAWS417
+      path: terraform/aws/deprecated/R81/tgw-gwlb/main.tf    
+    - rule_id: TFAWS417
+      path: terraform/aws/deprecated/R80.40/tgw-gwlb/main.tf
+    - rule_id: TFAWS417
+      path: terraform/aws/deprecated/R81/modules/vpc/main.tf
+    - rule_id: TFAWS417
+      path: terraform/aws/deprecated/R80.40/modules/vpc/main.tf
+    - rule_id: TFAWS286
+      path: terraform/aws/deprecated/R80.40/tap/main.tf
+    - rule_id: CLD021
+    - rule_id: CLD022
+    - rule_id: GJWT001
+      path: src/spectral-engine/src/matching/pattern_testing.rs
+    - rule_id: ^MLCPCKG.*
+      path: malware-exmaples/.*
+    - path: scripts/preset.yaml
+      match_fingerprint: 361e458c9933264178bd4f9033b5471e9f2fd86ab3c07a180fcfdc5460763089
+    - path: rules/.*/[[:alnum:]_-]\.yaml
+    - path: testdata/.*
+    - path: src/spectral-core/src/static/.*
+    - path: e2e/src/test/.*
+    - path: packages/spectral-client/env-config\.js
+    - path: /src/spectral-parsers/tests/.*
+    - path: ^rules/.*\.yaml$
+
+projects:
+  terraform:
+    project:
+      name: terraform
+    input:
+      - local: .
+        name: sources

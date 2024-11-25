@@ -49,7 +49,10 @@ prepare_github_release_branch:
     - git checkout -f master
     - git pull
     - git reset --hard origin/master
-    
+  
+    # Keep the title message for the GitHub PR title
+    - commit_message=$(git log --pretty=%s -n 1)
+
     # Now checkout to the release branch, this branch is the one who should reflect to GitHub
     - git checkout release
     - git pull
@@ -57,14 +60,15 @@ prepare_github_release_branch:
     # Squash all the content of master into release branch, on a conflict take master only.
     # git merge --allow-unrelated-histories --squash -X theirs master
     - if [ -n "$USER_COMMIT_SHA" ]; then
-    -   git cherry-pick $USER_COMMIT_SHA -X theirs
+    -   git cherry-pick -n $USER_COMMIT_SHA -X theirs
     - else
-    -   git cherry-pick $CI_COMMIT_SHA -X theirs
+    -   git cherry-pick -n $CI_COMMIT_SHA -X theirs
     - fi
 
     # Remove the following files/directories from been reflected to GitHub
     # Add here any file/dir that should not reflected to GitHub, such as internal configuration ci/cd
     - git reset .gitlab-ci.yml .env.example DEVELOPMENT.md .vscode .openapi-generator-ignore scripts RELEASE.md .shellcheckignore .github/workflows .spectral
+    - git commit -m $commit_message
 
     # Push cherry-pick
     - git push origin release

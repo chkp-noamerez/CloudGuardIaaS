@@ -117,10 +117,6 @@ match_ignores:
       path: terraform/aws/deprecated/R80.40/modules/vpc/main.tf
     - rule_id: TFAWS286
       path: terraform/aws/deprecated/R80.40/tap/main.tf
-    - rule_id: TFAWS417
-      path: terraform/aws/modules/vpc/main.tf  
-    - rule_id: TFAWS417
-      path: terraform/aws/modules/custom-autoscale/vpc/main.tf  
     - rule_id: CLD021
     - rule_id: CLD022
     - rule_id: GJWT001

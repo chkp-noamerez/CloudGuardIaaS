@@ -16,7 +16,6 @@
 ./deprecated/terraform/azure/R8040-R81/vmss-new-vnet/cloud-init.sh
 ./deprecated/terraform/gcp/R8040-R81/common/startup-script.sh
 ./terraform/aws/tap/tap_user_data.sh
-./deprecated/terraform/aws/R80.40/tap/tap_user_data.sh
 ./terraform/azure/high-availability-existing-vnet/cloud-init.sh
 ./terraform/azure/high-availability-new-vnet/cloud-init.sh
 ./terraform/azure/management-existing-vnet/cloud-init.sh

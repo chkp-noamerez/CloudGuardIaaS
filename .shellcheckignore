@@ -27,3 +27,4 @@
 ./terraform/azure/vmss-existing-vnet/cloud-init.sh
 ./terraform/azure/vmss-new-vnet/cloud-init.sh
 ./terraform/gcp/common/startup-script.sh
+./deprecated/terraform/aws/R80.40/tap/tap_user_data.sh

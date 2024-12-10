@@ -112,6 +112,9 @@ reflect_github_release_branch:
     # Create new branch that will be pushed to GitHub
     - git checkout -b $CI_PROJECT_PATH_SLUG-$CI_COMMIT_SHA
 
+    # Reset the new branch to the specific commit
+    - git reset --hard $CI_COMMIT_SHA
+
     # see https://stackoverflow.com/questions/62753648/rpc-failed-http-400-curl-22-the-requested-url-returned-error-400-bad-request
     - git config --global http.postBuffer 524288000
 

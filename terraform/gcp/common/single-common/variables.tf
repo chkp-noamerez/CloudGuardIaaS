@@ -21,10 +21,6 @@ variable "os_version" {
   type = string
   description = "GAIA OS version"
   default = "R8120"
-  validation {
-    condition = contains(["R8110", "R8120", "R82"], var.os_version)
-    error_message = "Allowed values for os-version are 'R8110', 'R8120', 'R82'"
-  }
 }
 variable "installation_type" {
   type = string

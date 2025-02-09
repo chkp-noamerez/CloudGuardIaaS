@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "23404549-c639-4f3f-8367-7afbb11749fb",
-		"name": "cme_api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "1fad2ac8-4546-4311-bdc2-15d1978305d2",
+		"name": "INTERNAL cme_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40800925"
 	},
 	"item": [
 		{
@@ -475,7 +476,7 @@
 			]
 		},
 		{
-			"name": "API_Releases",
+			"name": "INTERNAL_APIs",
 			"item": [
 				{
 					"name": "v1",
@@ -4289,6 +4290,74 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "Get logFileData",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "X-chkp-sid",
+												"value": "{{session}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.1/logFileData/<log_file_name>",
+											"protocol": "https",
+											"host": [
+												"{{managementIP}}"
+											],
+											"path": [
+												"web_api",
+												"v1.8",
+												"cme-api",
+												"v1.2.1",
+												"logFileData",
+												"<log_file_name>"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Toggle API Debug",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "X-chkp-sid",
+												"value": "{{session}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.1/setDebugMode/cme_api",
+											"protocol": "https",
+											"host": [
+												"{{managementIP}}"
+											],
+											"path": [
+												"web_api",
+												"v1.8",
+												"cme-api",
+												"v1.2.1",
+												"setDebugMode",
+												"cme_api"
+											]
+										}
+									},
+									"response": []
 								}
 							],
 							"description": "Operations for general CME configurations."
@@ -5965,7 +6034,7 @@
 								],
 								"body": {
 									"mode": "raw",
-																		"raw": "{\r\n    \"name\": \"PLEASE ENTER ACCOUNT NAME\",                     //\"myAzureAccount\"\r\n    \"subscription\": \"PLEASE ENTER SUBSCRIPTION\",             //\"aaaa-aaaa-aaaa-aaaa-aaaa\"\r\n    \"directory_id\": \"PLEASE ENTER DIRECTORY ID\",             //\"bbbb-bbbb-bbbb-bbbb-bbbb\"\r\n    \"application_id\": \"PLEASE ENTER APPLICATION ID\",         //\"cccc-cccc-cccc-cccc-cccc\"\r\n    \"client_secret\": \"PLEASE ENTER CLIENT SECRET\",           //\"mySecret\"\r\n    \"iam\": \"ENABLE/DISABLE IAM AUTH\",                        //false\r\n     \"deletion_tolerance\": \"PLEASE ENTER DELETION TOLERANCE\", // 3\r\n    \"domain\": \"PLEASE ENTER DOMAIN NAME\",                    //\"myDomain\"\r\n    \"environment\": \"PLEASE ENTER THE AZURE ENVIRONMENT\"      //\"AzureCloud\",\"AzureChinaCloud\",\"AzureUSGovernment\"\r\n}",
+									"raw": "{\r\n    \"name\": \"PLEASE ENTER ACCOUNT NAME\",                     //\"myAzureAccount\"\r\n    \"subscription\": \"PLEASE ENTER SUBSCRIPTION\",             //\"aaaa-aaaa-aaaa-aaaa-aaaa\"\r\n    \"directory_id\": \"PLEASE ENTER DIRECTORY ID\",             //\"bbbb-bbbb-bbbb-bbbb-bbbb\"\r\n    \"application_id\": \"PLEASE ENTER APPLICATION ID\",         //\"cccc-cccc-cccc-cccc-cccc\"\r\n    \"client_secret\": \"PLEASE ENTER CLIENT SECRET\",           //\"mySecret\"\r\n    \"authentication_type\": \"PLEASE ENTER AUTH TYPE\",         //\"ServicePrincipal(default), IAM\"\r\n    \"deletion_tolerance\": \"PLEASE ENTER DELETION TOLERANCE\", // 3\r\n    \"domain\": \"PLEASE ENTER DOMAIN NAME\",                    //\"myDomain\"\r\n    \"environment\": \"PLEASE ENTER THE AZURE ENVIRONMENT\"      //\"AzureCloud\",\"AzureChinaCloud\",\"AzureUSGovernment\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5973,7 +6042,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.3/accounts/azure",
+									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.2/accounts/azure",
 									"protocol": "https",
 									"host": [
 										"{{managementIP}}"
@@ -5982,7 +6051,7 @@
 										"web_api",
 										"v1.8",
 										"cme-api",
-										"v1.2.3",
+										"v1.2.2",
 										"accounts",
 										"azure"
 									],
@@ -6013,7 +6082,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"subscription\": \"PLEASE ENTER SUBSCRIPTION\",             //\"aaaa-aaaa-aaaa-aaaa-aaaa\"\r\n    \"directory_id\": \"PLEASE ENTER DIRECTORY ID\",             //\"bbbb-bbbb-bbbb-bbbb-bbbb\"\r\n    \"application_id\": \"PLEASE ENTER APPLICATION ID\",         //\"cccc-cccc-cccc-cccc-cccc\"\r\n    \"client_secret\": \"PLEASE ENTER CLIENT SECRET\",           //\"mySecret\"\r\n    \"iam\": \"ENABLE/DISABLE IAM AUTH\",                        //false   \r\n    \"deletion_tolerance\": \"PLEASE ENTER DELETION TOLERANCE\", // 3\r\n    \"domain\": \"PLEASE ENTER DOMAIN NAME\",                    //\"myDomain\"\r\n    \"environment\": \"PLEASE ENTER THE AZURE ENVIRONMENT\"      //\"AzureCloud\",\"AzureChinaCloud\",\"AzureUSGovernment\"\r\n}",
+									"raw": "{\r\n    \"subscription\": \"PLEASE ENTER SUBSCRIPTION\",             //\"aaaa-aaaa-aaaa-aaaa-aaaa\"\r\n    \"directory_id\": \"PLEASE ENTER DIRECTORY ID\",             //\"bbbb-bbbb-bbbb-bbbb-bbbb\"\r\n    \"application_id\": \"PLEASE ENTER APPLICATION ID\",         //\"cccc-cccc-cccc-cccc-cccc\"\r\n    \"client_secret\": \"PLEASE ENTER CLIENT SECRET\",           //\"mySecret\"\r\n    \"authentication_type\": \"PLEASE ENTER AUTH TYPE\",         //\"ServicePrincipal(default), IAM\"    \r\n    \"deletion_tolerance\": \"PLEASE ENTER DELETION TOLERANCE\", // 3\r\n    \"domain\": \"PLEASE ENTER DOMAIN NAME\",                    //\"myDomain\"\r\n    \"environment\": \"PLEASE ENTER THE AZURE ENVIRONMENT\"      //\"AzureCloud\",\"AzureChinaCloud\",\"AzureUSGovernment\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6058,7 +6127,7 @@
 									"raw": "{\r\n    \"name\": \"PLEASE ENTER GATEWAY CONFIGURATION NAME\",                                           //\"azureGwConfiguration\"\r\n    \"base64_sic_key\": \"PLEASE ENTER ENCODED BASE64 SIC KEY\",                                     //\"MTIzNDU2Nzg=\"\r\n    \"version\": \"PLEASE ENTER GATEWAY VERSION\",                                                   //\"R81.20\"\r\n    \"policy\": \"PLEASE ENTER POLICY NAME\",                                                        //\"Standard\"\r\n    \"ipv6\":  \"PLEASE ENTER BOLEAN VALUE FOR IPV6\",                                               //true / false\r\n    \"section_name\": \"PLEASE ENTER SECTION NAME\",                                                 //\"sectionName\"\r\n    \"x_forwarded_for\": \"PLEASE ENTER BOOLEAN VALUE FOR X FORWARDED FOR\",                         //true / false\r\n    \"color\": \"PLEASE ENTER COLOR NAME\",                                                          //\"red\"\r\n    \"blades\": {\r\n        \"identity-awareness\": true,\r\n        \"application-control\": true\r\n    },\r\n    \"identity_awareness_settings\": {\r\n        \"enable_cloudguard_controller\": \"PLEASE ENTER BOOLEAN VALUE FOR ENABLE CLOUDGUARD CONTROLLER\",       //true / false\r\n        \"receive_identities_from\": [\"PLEASE ENTER PDP GATEWAY NAMES\"]                                     // [\"PDP_GW1\", \"PDP_GW2\"]\r\n    },\r\n    \"related_account\": \"PLEASE ENTER RELATED ACCOUNT\",                                          //\"azure-account\"\r\n    \"repository_gateway_scripts\": [\r\n        {\r\n            \"name\": \"PLEASE ENTER REPOSITORY GATEWAY SCRIPT NAME\",                            //\"repo_script\"\r\n            \"parameters\": \"PLEASE ENTEAR PARAMETERS SEPARATED BY SPACE\"                      //\"param1 param2\"\r\n\r\n        }\r\n    ],\r\n    \"send_logs_to_server\": \"PLEASE ENTER PRIMARY LOG SERVERS NAMES\",                       //\"[\"PLM1\", \"PLM_2\"]\"\r\n    \"send_logs_to_backup_server\": \"PLEASE ENTER BACKUP LOG SERVERS NAMES\",                //\"[\"BLM1\", \"BLM_2\"]\"\r\n    \"send_alerts_to_server\": \"PLEASE ENTER ALERTS SERVERS NAMES\",                         //\"[\"ALM1\", \"ALM_2\"]\"\r\n    \"communication_with_servers_behind_nat\": \"PLEASE ENTER MANAGEMENT BEHIND NAT CONFIGURATION\" // \"according-to-topology | original-ip-only | translated-ip-only | use-management-settings\"\r\n}"
 								},
 								"url": {
-									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.3/gwConfigurations/azure",
+									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.2/gwConfigurations/azure",
 									"protocol": "https",
 									"host": [
 										"{{managementIP}}"
@@ -6067,7 +6136,7 @@
 										"web_api",
 										"v1.8",
 										"cme-api",
-										"v1.2.3",
+										"v1.2.2",
 										"gwConfigurations",
 										"azure"
 									]
@@ -6094,7 +6163,7 @@
 									"raw": "{\r\n    \"base64_sic_key\": \"PLEASE ENTER ENCODED BASE64 SIC KEY\",                                     //\"MTIzNDU2Nzg=\"\r\n    \"version\": \"PLEASE ENTER GATEWAY VERSION\",                                                   //\"R81.20\"\r\n    \"policy\": \"PLEASE ENTER POLICY NAME\",                                                        //\"Standard\"\r\n    \"ipv6\":  \"PLEASE ENTER BOLEAN VALUE FOR IPV6\",                                               //true / false\r\n    \"section_name\": \"PLEASE ENTER SECTION NAME\",                                                 //\"sectionName\"\r\n    \"x_forwarded_for\": \"PLEASE ENTER BOOLEAN VALUE FOR X FORWARDED FOR\",                         //true / false\r\n    \"color\": \"PLEASE ENTER COLOR NAME\",                                                          //\"red\"\r\n    \"blades\": {\r\n        \"identity-awareness\": true,\r\n        \"https-inspection\": true,\r\n        \"anti-virus\": true\r\n    },\r\n    \"identity_awareness_settings\": {\r\n        \"enable_cloudguard_controller\": \"PLEASE ENTER BOOLEAN VALUE FOR ENABLE CLOUDGUARD CONTROLLER\",       //true / false\r\n        \"receive_identities_from\": [\"PLEASE ENTER PDP GATEWAY NAMES\"]                                     // [\"PDP_GW1\", \"PDP_GW2\"]\r\n    },\r\n    \"related_account\": \"PLEASE ENTER RELATED ACCOUNT\",                                          //\"azure-account\"\r\n    \"repository_gateway_scripts\": [\r\n        {\r\n            \"name\": \"PLEASE ENTER REPOSITORY GATEWAY SCRIPT NAME\",                            //\"repo_script\"\r\n            \"parameters\": \"PLEASE ENTEAR PARAMETERS SEPARATED BY SPACE\"                      //\"param1 param2\"\r\n\r\n        }\r\n    ],\r\n    \"send_logs_to_server\": \"PLEASE ENTER PRIMARY LOG SERVERS NAMES\",                       //\"[\"PLM1\", \"PLM_2\"]\"\r\n    \"send_logs_to_backup_server\": \"PLEASE ENTER BACKUP LOG SERVERS NAMES\",                //\"[\"BLM1\", \"BLM_2\"]\"\r\n    \"send_alerts_to_server\": \"PLEASE ENTER ALERTS SERVERS NAMES\",                         //\"[\"ALM1\", \"ALM_2\"]\"\r\n    \"communication_with_servers_behind_nat\": \"PLEASE ENTER MANAGEMENT BEHIND NAT CONFIGURATION\" // \"according-to-topology | original-ip-only | translated-ip-only | use-management-settings\"\r\n}"
 								},
 								"url": {
-									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.3/gwConfigurations/azure/<gwConfiguration_name>",
+									"raw": "https://{{managementIP}}/web_api/v1.8/cme-api/v1.2.2/gwConfigurations/azure/<gwConfiguration_name>",
 									"protocol": "https",
 									"host": [
 										"{{managementIP}}"
@@ -6103,7 +6172,7 @@
 										"web_api",
 										"v1.8",
 										"cme-api",
-										"v1.2.3",
+										"v1.2.2",
 										"gwConfigurations",
 										"azure",
 										"<gwConfiguration_name>"

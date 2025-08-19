@@ -136,6 +136,7 @@ match_ignores:
     - path: packages/spectral-client/env-config\.js
     - path: /src/spectral-parsers/tests/.*
     - path: ^rules/.*\.yaml$
+    - path: deprecated/
 
 projects:
   terraform:

@@ -68,16 +68,39 @@
     }
   },
   "variables": {
-    "localSubnetRouteV4": [
-      {
-        "name": "Local-Subnet",
-        "properties": {
-          "addressPrefix": "[parameters('subnet1Prefix')]",
-          "nextHopType": "VnetLocal"
-        }
-      }
-    ],
-    "routesArray": "[variables('localSubnetRouteV4')]",
+        "localSubnetRouteV4": [
+            {
+                "name": "Local-Subnet",
+                "properties": {
+                    "addressPrefix": "[parameters('subnet1Prefix')]",
+                    "nextHopType": "VnetLocal"
+                }
+            },
+            {
+                "name": "To-VNet",
+                "properties": {
+                    "addressPrefix": "[parameters('virtualNetworkAddressPrefixes')[0]]",
+                    "nextHopType": "None"
+                }
+            }
+        ],
+        "localSubnetRouteV6": [
+            {
+                "name": "Local-Subnet-V6",
+                "properties": {
+                    "addressPrefix": "[parameters('subnet1PrefixV6')]",
+                    "nextHopType": "VnetLocal"
+                }
+            },
+            {
+                "name": "To-VNet-V6",
+                "properties": {
+                    "addressPrefix": "[parameters('virtualNetworkAddressPrefixV6')]",
+                    "nextHopType": "None"
+                }
+            }
+        ],
+        "routesArray": "[concat(variables('localSubnetRouteV4'), variables('localSubnetRouteV6'))]",
     "nsgProperties": {
         "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('NewNsgName'))]" 
     },

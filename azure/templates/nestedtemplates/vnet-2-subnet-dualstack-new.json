@@ -103,6 +103,25 @@
       }
     ],
     "routesArray":"[concat(variables('localSubnetRoute'), variables('toInternalRoutes'))]",
+    "localSubnetRouteV6": [
+      {
+        "name": "Local-Subnet-V6",
+        "properties": {
+          "addressPrefix": "[parameters('subnet1PrefixV6')]",
+          "nextHopType": "VnetLocal"
+        }
+      }
+    ],
+    "toInternalRoutesV6": [
+      {
+        "name": "To-Internal-Vnet-V6",
+        "properties": {
+          "addressPrefix": "[parameters('virtualNetworkAddressPrefixV6')]",
+          "nextHopType": "None"
+        }
+      }
+    ],
+    "routesArrayCombined": "[concat(variables('routesArray'), variables('localSubnetRouteV6'), variables('toInternalRoutesV6'))]",
     "nsgName": "[concat(parameters('vmName'), '-nsg')]",
     "nsgProperties": {
         "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
@@ -118,7 +137,7 @@
       "location": "[parameters('location')]",
       "name": "[parameters('subnet1Name')]",
       "properties": {
-        "routes": "[variables('routesArray')]" 
+        "routes": "[variables('routesArrayCombined')]" 
       },
       "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/routeTables'), parameters('tagsByResource')['Microsoft.Network/routeTables'], json('{}')) ]"
     },
@@ -128,14 +147,23 @@
       "location": "[parameters('location')]",
       "name": "[parameters('subnet2Name')]",
       "properties": {
-        "routes": [ {
+        "routes": [
+          {
             "name": "To-Internet",
             "properties": {
-                "addressPrefix": "0.0.0.0/0",
-                "nextHopType": "None" 
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "None"
             }
-        } ]
-     },
+          },
+          {
+            "name": "To-Internet-V6",
+            "properties": {
+              "addressPrefix": "::/0",
+              "nextHopType": "None"
+            }
+          }
+        ]
+      },
       "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/routeTables'), parameters('tagsByResource')['Microsoft.Network/routeTables'], json('{}')) ]"
     },
     {

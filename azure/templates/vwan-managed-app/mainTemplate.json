@@ -16,8 +16,8 @@
             "defaultValue": "Security Enforcement (NGTP)",
             "allowedValues": [
                 "Security Enforcement (NGTP)",
-                "Full Package (NGTX and Smart1-Cloud)",
-                "Full Package Premium (NGTX and Smart1-Cloud Premium)"
+                "Full Package (NGTX and Smart-1 Cloud)",
+                "Full Package Premium (NGTX and Smart-1 Cloud Premium)"
             ],
             "type": "String",
             "metadata": {
@@ -36,7 +36,8 @@
             "allowedValues": [
                 "R8110",
                 "R8120",
-                "R82"
+                "R82",
+                "R82.10"
             ],
             "type": "String",
             "metadata": {

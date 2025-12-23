@@ -1137,7 +1137,7 @@
             "label": "Availability options",
             "defaultValue": "Availability Set",
             "toolTip": "Use replicated Cluster VMs in Availability Set or Availability Zones. Note that the load balancers and their IP addresses will be zone redundant in any case.",
-            "visible": "[contains(' australiaeast brazilsouth canadacentral centralus eastasia eastus eastus2 francecentral germanywestcentral japaneast koreacentral northeurope norwayeast southafricanorth southcentralus southeastasia swedencentral uksouth usgovvirginia westeurope westus2 westus3 switzerlandnorth qatarcentral centralindia uaenorth italynorth', concat(' ', location(), ' '))]",
+            "visible": "[contains(' australiaeast brazilsouth canadacentral centralindia centralus eastasia eastus eastus2 eastus2euap francecentral germanywestcentral indonesiacentral israelcentral italynorth japaneast japanwest koreacentral malaysiawest mexicocentral newzealandnorth northeurope norwayeast polandcentral southafricanorth southcentralus southeastasia spaincentral swedencentral switzerlandnorth uaenorth uksouth westeurope westus2 westus3 austriaeast chilecentral qatarcentral usgovvirginia', concat(' ', location(), ' '))]",
             "constraints": {
               "allowedValues": [
                 {

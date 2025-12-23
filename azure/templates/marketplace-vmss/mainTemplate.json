@@ -431,17 +431,22 @@
         "description": "The URI of the blob containing the development image"
       }
     },
-    "availabilityZonesNum": {
-      "type": "int",
-      "allowedValues": [
-        0,
-        1,
-        2,
-        3
-      ],
-      "defaultValue": 0,
+    "availabilityZones": {
+      "type": "array",
+      "defaultValue": [],
       "metadata": {
-        "description": "The number of availability zones"
+        "description": "List of availability zones. Leave empty to not use availability zones."
+      }
+    },
+    "availabilityZonesChoice": {
+      "type": "string",
+      "defaultValue": "No",
+      "allowedValues": [
+        "No",
+        "Yes"
+      ],
+      "metadata": {
+        "description": "Enable Availability Zones for VMSS. 'Yes' to use Availability Zones, or 'No' to deploy without zones."
       }
     },
     "_artifactsLocation": {
@@ -1438,36 +1443,6 @@
     "vnetID": "[if(variables('deployNewVnet'), resourceId(variables('vnetRGName'), 'Microsoft.Resources/deployments', 'networkNewSetup'), resourceId(variables('vnetRGName'), 'Microsoft.Resources/deployments', 'networkExistingSetup'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
     "customImageId": "[variables('imageReferenceCustomUri').id]",
-    "availabilityZonesLocations": [
-      "brazilsouth",
-      "canadacentral",
-      "centralus",
-      "eastus",
-      "eastus2",
-      "southcentralus",
-      "usgovvirginia",
-      "westus2",
-      "westus3",
-      "francecentral",
-      "germanywestcentral",
-      "northeurope",
-      "norwayeast",
-      "uksouth",
-      "westeurope",
-      "swedencentral",
-      "switzerlandnorth",
-      "qatarcentral",
-      "uaenorth",
-      "southafricanorth",
-      "australiaeast",
-      "centralindia",
-      "japaneast",
-      "koreacentral",
-      "southeastasia",
-      "eastasia",
-      "italynorth"
-    ],
-    "availabilityZonesProperty": "[range(1, parameters('availabilityZonesNum'))]",
     "mgmtInterface": "[if(equals(parameters('instanceLevelPublicIP'), 'yes'), parameters('mgmtInterfaceOpt1'), parameters('mgmtInterfaceOpt2'))]",
     "mgmtIpAddressType": "[split(variables('mgmtInterface'), '-')[1]]",
     "mgmtInterfaceName": "[split(variables('mgmtInterface'), '-')[0]]",
@@ -1758,7 +1733,7 @@
       "name": "[parameters('vmName')]",
       "location": "[variables('location')]",
       "identity": "[if(equals(variables('customMetrics'), 'yes'), variables('identity'), json('null'))]",
-      "zones": "[if(and(contains(variables('availabilityZonesLocations'), variables('location')), greater(parameters('availabilityZonesNum'), 0)), variables('availabilityZonesProperty'), json('null'))]",
+      "zones": "[if(equals(parameters('availabilityZonesChoice'), 'Yes'), parameters('availabilityZones'), json('null'))]",
       "tags": "[union(variables('vmssTags'),if(contains(parameters('tagsByResource'), 'Microsoft.Compute/virtualMachineScaleSets'), parameters('tagsByResource')['Microsoft.Compute/virtualMachineScaleSets'], json('{}')))]",
       "dependsOn": [
         "[variables('vnetID')]",

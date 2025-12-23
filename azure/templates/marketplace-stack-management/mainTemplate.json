@@ -13,9 +13,13 @@
       "type": "string",
       "allowedValues": [
         "R81.10 - Bring Your Own License",
-        "R81.10 - Pay As You Go (MGMT25)"
+        "R81.10 - Pay As You Go (MGMT25)",
+        "R81.20 - Bring Your Own License",
+        "R81.20 - Pay As You Go (MGMT25)",
+        "R82 - Bring Your Own License",
+        "R82 - Pay As You Go (MGMT25)"
       ],
-      "defaultValue": "R81.10 - Bring Your Own License",
+      "defaultValue": "R81.20 - Bring Your Own License",
       "metadata": {
         "description": "Version of Check Point CloudGuard"
       }
@@ -210,12 +214,20 @@
     "location": "[parameters('location')]",
     "offers": {
       "R81.10 - Bring Your Own License": "BYOL",
-      "R81.10 - Pay As You Go (MGMT25)": "MGMT25"
+      "R81.10 - Pay As You Go (MGMT25)": "MGMT25",
+      "R81.20 - Bring Your Own License": "BYOL",
+      "R81.20 - Pay As You Go (MGMT25)": "MGMT25",
+      "R82 - Bring Your Own License": "BYOL",
+      "R82 - Pay As You Go (MGMT25)": "MGMT25"
     },
     "offer": "[variables('offers')[parameters('cloudGuardVersion')]]",
       "osVersions": {
       "R81.10 - Bring Your Own License": "R8110",
-      "R81.10 - Pay As You Go (MGMT25)": "R8110"
+      "R81.10 - Pay As You Go (MGMT25)": "R8110",
+      "R81.20 - Bring Your Own License": "R8120",
+      "R81.20 - Pay As You Go (MGMT25)": "R8120",
+      "R82 - Bring Your Own License": "R82",
+      "R82 - Pay As You Go (MGMT25)": "R82"
     },
     "osVersion": "[variables('osVersions')[parameters('cloudGuardVersion')]]",
     "isBlink": false,
@@ -229,6 +241,8 @@
     "diskSizeGB": "[add(parameters('additionalDiskSizeGB'), variables('diskSize100GB'))]",
     "customData": "[concat('#!/usr/bin/python /etc/cloud_config.py\n', '\n', 'installationType=\"', variables('installationType'), '\"', '\n', 'allowUploadDownload=\"', variables('allowUploadDownload'), '\"', '\n', 'osVersion=\"', variables('osVersion'), '\"', '\n', 'templateName=\"', variables('templateName'), '\"', '\n', 'isBlink=\"', variables('isBlink'), '\"', '\n', 'templateVersion=\"', variables('templateVersion'), '\"', '\n', 'bootstrapScript64=\"', variables('bootstrapScript64'), '\"', '\n', 'location=\"', variables('location'), '\"', '\n', 'sicKey=\"', variables('sicKey'), '\"', '\n', 'managementGUIClientNetwork=\"', variables('managementGUIClientNetwork'), '\"', '\n', 'resourceGroup=\"', resourceGroup().name, '\"', '\n', 'subscriptionId=\"', subscription().subscriptionId, '\"', '\n')]",
     "imageOfferR8110": "check-point-cg-r8110",
+    "imageOfferR8120": "check-point-cg-r8120",
+    "imageOfferR82": "check-point-cg-r82",
     "imageOffer": "[concat(variables(concat('imageOffer', variables('osVersion'))), parameters('preview'))]",
     "imagePublisher": "checkpoint",
     "imageReferenceBYOL": {

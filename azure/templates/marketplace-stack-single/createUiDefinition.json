@@ -53,13 +53,21 @@
             "name": "cloudGuardVersion",
             "type": "Microsoft.Common.DropDown",
             "label": "Check Point CloudGuard version",
-            "defaultValue": "R81.10",
+            "defaultValue": "R81.20",
             "toolTip": "The version of Check Point CloudGuard Gateway.",
             "constraints": {
               "allowedValues": [
                 {
                   "label": "R81.10",
                   "value": "R81.10"
+                },
+                {
+                  "label": "R81.20",
+                  "value": "R81.20"
+                },
+                {
+                  "label": "R82",
+                  "value": "R82"
                 }
               ]
             }
@@ -163,9 +171,9 @@
             "count": 1
           },
           {
-            "name": "R8110vmSizeUiNGTP",
+            "name": "R8120vmSizeUiBYOL",
             "type": "Microsoft.Compute.SizeSelector",
-            "visible": "[and(equals(steps('chkp').cloudGuardVersion, 'R81.10'), contains(steps('chkp').R80Offer, '(NGTP)'))]",
+            "visible": "[and(equals(steps('chkp').cloudGuardVersion, 'R81.20'), contains(steps('chkp').R80Offer, 'Bring Your Own License'))]",
             "label": "Virtual machine size",
             "toolTip": "The VM size of the Security Gateway",
             "recommendedSizes": [
@@ -239,15 +247,15 @@
             "osPlatform": "Linux",
             "imageReference": {
               "publisher": "checkpoint",
-              "offer": "check-point-cg-r8110",
-              "sku": "sg-ngtp"
+              "offer": "check-point-cg-r8120",
+              "sku": "sg-byol"
             },
             "count": 1
           },
           {
-            "name": "R8110vmSizeUiNGTX",
+            "name": "R82vmSizeUiBYOL",
             "type": "Microsoft.Compute.SizeSelector",
-            "visible": "[and(equals(steps('chkp').cloudGuardVersion, 'R81.10'), contains(steps('chkp').R80Offer, '(NGTX)'))]",
+            "visible": "[and(equals(steps('chkp').cloudGuardVersion, 'R82'), contains(steps('chkp').R80Offer, 'Bring Your Own License'))]",
             "label": "Virtual machine size",
             "toolTip": "The VM size of the Security Gateway",
             "recommendedSizes": [
@@ -321,8 +329,8 @@
             "osPlatform": "Linux",
             "imageReference": {
               "publisher": "checkpoint",
-              "offer": "check-point-cg-r8110",
-              "sku": "sg-ngtx"
+              "offer": "check-point-cg-r82",
+              "sku": "sg-byol"
             },
             "count": 1
           },
@@ -491,7 +499,7 @@
       "authenticationType": "[basics('auth').authenticationType]",
       "sshPublicKey": "[basics('auth').sshPublicKey]",
       "vmName": "[basics('gatewayNameUi')]",
-      "vmSize": "[coalesce(steps('chkp').R8110vmSizeUiBYOL, steps('chkp').R8110vmSizeUiNGTP, steps('chkp').R8110vmSizeUiNGTX )]",
+      "vmSize": "[coalesce(steps('chkp').R8110vmSizeUiBYOL, steps('chkp').R8120vmSizeUiBYOL, steps('chkp').R82vmSizeUiBYOL)]",
       "sicKey": "[coalesce(steps('chkp').sicKeyUi, 'notused')]",
       "virtualNetworkName": "[steps('network').virtualNetwork.name]",
       "virtualNetworkAddressPrefix": "[steps('network').virtualNetwork.addressPrefix]",

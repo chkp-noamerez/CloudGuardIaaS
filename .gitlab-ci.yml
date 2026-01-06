@@ -3,9 +3,9 @@ variables:
 
 
 include:
-  - project: devis/templates
+  - project: global-templates/devex
     file: '.template.yml'
-    ref: latest
+    ref: main
   - project: cloudguard-integrations/ci-utils
     ref: master
     file: ci/.gitlab-ci-analysis.yml

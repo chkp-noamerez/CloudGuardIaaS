@@ -77,7 +77,7 @@
                 }
             },
             {
-                "name": "To-VNet",
+                "name": "To-Vnet",
                 "properties": {
                     "addressPrefix": "[parameters('virtualNetworkAddressPrefixes')[0]]",
                     "nextHopType": "None"
@@ -93,7 +93,7 @@
                 }
             },
             {
-                "name": "To-VNet-V6",
+                "name": "To-Vnet-V6",
                 "properties": {
                     "addressPrefix": "[parameters('virtualNetworkAddressPrefixV6')]",
                     "nextHopType": "None"

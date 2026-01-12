@@ -2069,6 +2069,12 @@
           "subnet2PrefixV6": {
             "value": "[parameters('subnet2PrefixV6')]" 
           },
+          "Subnet2StartAddress": {
+            "value": "[parameters('subnet2StartAddress')]"
+          },
+          "Subnet2Ipv6StartAddress": {
+            "value": "[parameters('ilbFrontendIPv6Address')]"
+          },
           "vmName": {
             "value": "[parameters('vmName')]" 
           },
@@ -2080,6 +2086,9 @@
           },
           "tagsByResource": {
             "value": "[parameters('tagsByResource')]"
+          },
+          "deploymentType": {
+            "value": "vmss"
           }
         }
       }

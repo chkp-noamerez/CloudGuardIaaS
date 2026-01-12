@@ -1485,6 +1485,12 @@
           "Subnet2PrefixV6": {
             "value": "[parameters('Subnet2Ipv6Prefix')]"
           },
+          "Subnet2StartAddress": {
+            "value": "[parameters('Subnet2StartAddress')]"
+          },
+          "Subnet2Ipv6StartAddress": {
+            "value": "[parameters('Subnet2Ipv6StartAddress')]"
+          },
           "vmName": {
             "value": "[parameters('vmName')]"
           },
@@ -1496,6 +1502,9 @@
           },
           "tagsByResource": {
             "value": "[parameters('tagsByResource')]"
+          },
+          "deploymentType": {
+            "value": "single"
           }
         }
       }

@@ -21,12 +21,81 @@ workflow:
 
 stages:
   - analysis
+  - test_native_templates
   - Verify
   - upload
   - prepare_release
   - github_upload
 
 
+##### Analysis Jobs #####
+shellcheck:
+  stage: analysis
+  script:
+    - IGNORE_FILES=$(cat .shellcheckignore)
+    - echo "---Ignoring files from shellcheckignore---"
+    - echo "$IGNORE_FILES"
+    - find . -name "*.sh" | grep -v "$IGNORE_FILES" | xargs shellcheck -e SC1071
+
+
+pycodestyle:
+  allow_failure: true
+
+
+#### Tests for native cloud templates ####
+
+#### Azure ARM Templates ####
+test_azure_arm:
+  stage: test_native_templates
+  variables:
+    solutions: gateway-load-balancer ha management mds single vmss vwan
+  image: mcr.microsoft.com/azure-powershell:latest
+  parallel:
+    matrix: 
+      - SOLUTION: [gateway-load-balancer, ha, management, mds, single, vmss, vwan]
+  script:
+    - apt update
+    - apt install git -y
+    - git clone https://github.com/Azure/arm-ttk.git
+    - |
+      echo "Testing marketplace-$SOLUTION"
+      pwsh -c '
+        Import-Module ./arm-ttk/arm-ttk/arm-ttk.psd1;
+        Test-AzTemplate -TemplatePath  ./azure/templates/'marketplace-$SOLUTION'/ -Skip "apiVersions Should Be Recent" | Tee-Object -Variable TestResults;
+        $TestFailures =  $TestResults | Where-Object { -not $_.Passed } ;
+        If ($TestFailures -ne $null) {
+          echo $TestFailures;
+          exit 1;
+        }
+      '
+
+test_azure_china_arm:
+  stage: test_native_templates
+  variables:
+    solutions: gateway-load-balancer ha management mds single vmss vwan
+  image: mcr.microsoft.com/azure-powershell:latest
+  parallel:
+    matrix: 
+      - SOLUTION: [gateway-load-balancer, ha, management, mds, single, vmss, vwan]
+  script:
+    - apt update
+    - apt install git -y
+    - git clone https://github.com/Azure/arm-ttk.git
+    - |
+      echo "Testing marketplace-$SOLUTION"
+      pwsh -c '
+        Import-Module ./arm-ttk/arm-ttk/arm-ttk.psd1;
+        Test-AzTemplate -TemplatePath  ./china/azure/'marketplace-$SOLUTION'/ -Skip "apiVersions Should Be Recent" | Tee-Object -Variable TestResults;
+        $TestFailures =  $TestResults | Where-Object { -not $_.Passed } ;
+        If ($TestFailures -ne $null) {
+          echo $TestFailures;
+          exit 1;
+        }
+      '
+  allow_failure: true
+
+
+#### Jobs to reflect changes from GitLab to GitHub release branch ####
 prepare_github_release_branch:
   stage: prepare_release
   image: artifactory-product.checkpoint.com/docker/alpine:latest
@@ -76,7 +145,6 @@ prepare_github_release_branch:
 
   only:
     - master
-
 
 
 reflect_github_release_branch:
@@ -139,16 +207,3 @@ reflect_github_release_branch:
 
   only:
     - master
-
-
-shellcheck:
-  stage: analysis
-  script:
-    - IGNORE_FILES=$(cat .shellcheckignore)
-    - echo "---Ignoring files from shellcheckignore---"
-    - echo "$IGNORE_FILES"
-    - find . -name "*.sh" | grep -v "$IGNORE_FILES" | xargs shellcheck -e SC1071
-
-
-pycodestyle:
-  allow_failure: true

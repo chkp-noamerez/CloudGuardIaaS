@@ -101,6 +101,8 @@ prepare_github_release_branch:
   image: artifactory-product.checkpoint.com/docker/alpine:latest
   variables:
     ARTIFACTORY: "https://artifactory-product.checkpoint.com/artifactory"
+  before_script:
+    - apk update && apk add git
   script:
     - git config --global user.email $GITLAB_USER_EMAIL
     - git config --global user.name $GITLAB_USER_NAME
@@ -202,7 +204,7 @@ reflect_github_release_branch:
     - master
 
 
-upload_templates:
+upload_azure_templates_to_s3:
   stage: upload
   image: artifactory-product.checkpoint.com/docker-local/cloudguard-integrations/${CGNS_RUNNER_IMAGE}
   only:

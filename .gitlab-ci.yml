@@ -101,13 +101,6 @@ prepare_github_release_branch:
   image: artifactory-product.checkpoint.com/docker/alpine:latest
   variables:
     ARTIFACTORY: "https://artifactory-product.checkpoint.com/artifactory"
-  before_script:
-    # Install GitHub CLI
-    - echo "$ARTIFACTORY/alpine/edge/main" > /etc/apk/repositories
-    - echo "$ARTIFACTORY/alpine/edge/community" >> /etc/apk/repositories
-    - wget -O /etc/apk/keys/devis.rsa.pub $ARTIFACTORY/api/security/keypair/public/repositories/alpine
-    - apk update && apk add openssl ca-certificates github-cli
-
   script:
     - git config --global user.email $GITLAB_USER_EMAIL
     - git config --global user.name $GITLAB_USER_NAME
@@ -137,7 +130,7 @@ prepare_github_release_branch:
 
     # Remove the following files/directories from been reflected to GitHub
     # Add here any file/dir that should not reflected to GitHub, such as internal configuration ci/cd
-    - git reset .gitlab-ci.yml .env.example DEVELOPMENT.md .vscode .openapi-generator-ignore scripts RELEASE.md .shellcheckignore .github/workflows .spectral common/Internal_cme_api_postman/*
+    - git reset -- .gitlab-ci.yml .internal .env.example DEVELOPMENT.md .vscode .openapi-generator-ignore scripts RELEASE.md .shellcheckignore .github/workflows .spectral common/Internal_cme_api_postman/*
     - git commit -m "$commit_message"
 
     # Push cherry-pick
@@ -207,3 +200,24 @@ reflect_github_release_branch:
 
   only:
     - master
+
+
+upload_templates:
+  stage: upload
+  image: artifactory-product.checkpoint.com/docker-local/cloudguard-integrations/${CGNS_RUNNER_IMAGE}
+  only:
+    - master
+    - staging
+  script:
+    - apt-get install -y jq
+    - git clone -b "master" https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.locsec.net/cloudguard-integrations/ci-utils.git ${PROJECT_PATH}
+    - source ci-utils/utils/aws_credentials/generate_aws_credentials.sh
+    - bucket="azure.templates"
+    - lambda="azure.templates-lambda"
+    - if [[ ${CI_COMMIT_REF_NAME} == "master" ]]; then
+    -     bucket="${bucket}.prod"
+    -     lambda="${lambda}.prod"
+    - fi
+    - chmod +x .internal/azure_scripts/*
+    - python3 .internal/azure_scripts/build_all.py -b prod
+    - python3 .internal/azure_scripts/upload_templates.py --bucket ${bucket} --lambda-bucket ${lambda} --templates all

@@ -1,0 +1,369 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hubId": {
+      "type": "string",
+      "metadata": {
+        "description": "The Virtual Wan Hub ID"
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "LicenseType": {
+      "type": "string",
+      "allowedValues": [
+        "Security Enforcement (NGTP)",
+        "Full Package (NGTX and Smart-1 Cloud)",
+        "Full Package Premium (NGTX and Smart-1 Cloud Premium)"
+      ],
+      "defaultValue": "Security Enforcement (NGTP)",
+      "metadata": {
+        "description": "Check Point license type"
+      }
+    },
+    "osVersion": {
+      "type": "string",
+      "allowedValues": [
+        "R8110",
+        "R8120",
+        "R82",
+        "R82.10"
+      ],
+      "defaultValue": "R82",
+      "metadata": {
+        "description": "Check Point OS version"
+      }
+    },
+    "imageVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The image version that will be used to deploy the solution"
+      },
+      "defaultValue": "latest"
+    },
+    "scaleUnit": {
+      "type": "string",
+      "defaultValue": "2",
+      "allowedValues": [
+        "2",
+        "4",
+        "10",
+        "20",
+        "30",
+        "40",
+        "60",
+        "80"
+      ],
+      "metadata": {
+        "description": "The scale unit size to deploy"
+      }
+    },
+    "bootstrapScript": {
+      "type": "string",
+      "metadata": {
+        "description": "Bootstrap script"
+      },
+      "defaultValue": ""
+    },
+    "adminShell": {
+      "type": "string",
+      "defaultValue": "/etc/cli.sh",
+      "allowedValues": [
+        "/etc/cli.sh",
+        "/bin/bash",
+        "/bin/csh",
+        "/bin/tcsh"
+      ],
+      "metadata": {
+        "Description": "The default shell for the admin user"
+      }
+    },
+    "sicKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "One time key for Secure Internal Communication"
+      }
+    },
+    "sshPublicKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Paste an OpenSSH public key. You can generate a key pair using ssh-keygen (Linux, OS X, Cygwin) or PuttyGen (Windows)."
+      }
+    },
+    "MaintenanceModePasswordHash": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "Description": "Maintenance mode password hash, relevant only for R81.20 and higher versions"
+      }
+    },
+    "SerialConsolePasswordHash": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "Description": "Optional parameter, used to enable serial console connection in case of SSH key as authentication type"
+      }
+    },
+    "BGP": {
+      "type": "string",
+      "defaultValue": "64512",
+      "metadata": {
+        "description": "BGP ASN to peer with Azure Route Service"
+      }
+    },
+    "NVA": {
+      "type": "string",
+      "metadata": {
+        "description": "NVA name to deploy in the hub"
+      }
+    },
+    "customMetrics": {
+      "type": "string",
+      "allowedValues": [
+        "no",
+        "yes"
+      ],
+      "defaultValue": "yes",
+      "metadata": {
+        "Description": "Indicates whether Custom Metrics will be used for VMSS Scaling policy and VM monitoring"
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Deployment location"
+      },
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "hubASN": {
+      "type": "int",
+      "metadata": {
+        "description": "ASN from the HUB"
+      }
+    },
+    "hubPeers": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of IPs that is obtained from the HUB object"
+      }
+    },
+    "smart1CloudTokenA": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "smart1CloudTokenB": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "smart1CloudTokenC": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "smart1CloudTokenD": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "smart1CloudTokenE": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
+    "managedIdentityName": {
+      "type": "string",
+      "defaultValue": "vwan-managed-identity"
+    },
+    "publicIPIngress": {
+      "type": "string",
+      "allowedValues": [
+        "no",
+        "yes"
+      ],
+      "defaultValue": "no",
+      "metadata": {
+        "description": "Use public IP for ingress traffic"
+      }
+    },
+    "createNewIPIngress": {
+      "type": "string",
+      "allowedValues": [
+        "no",
+        "yes"
+      ],
+      "defaultValue": "no",
+      "metadata": {
+        "description": "Create new public IP"
+      }
+    },
+    "upgrading": {
+      "type": "string",
+      "defaultValue": "no",
+      "allowedValues": [
+        "no",
+        "yes"
+      ],
+      "metadata": {
+        "Description": "Indicates whether the user is upgrading to a new NVA"
+      }
+    },
+    "customLicenseType": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "",
+        "ngtp",
+        "ngtx",
+        "premium"
+      ],
+      "metadata": {
+        "Description": "License type when using staged image"
+      }
+    },
+    "customLicenseType": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "",
+        "ngtp",
+        "ngtx",
+        "premium"
+      ],
+      "metadata": {
+        "Description": "License type when using staged image"
+      }
+    },
+    "ipIngressExistingResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource id of the public IP"
+      },
+      "defaultValue": ""
+    },
+    "templateName": {
+      "type": "string",
+      "metadata": {
+        "description": "The template name"
+      },
+      "defaultValue": "wan"
+    }
+  },
+  "variables": {
+    "location": "[parameters('location')]",
+    "customMetrics": "[parameters('customMetrics')]",
+    "templateName": "[parameters('templateName')]",
+    "isBlink": true,
+    "templateVersion": "20230910",
+    "healthProbe": true,
+    "secondaryHealthProbe": "[if(and(equals(parameters('publicIPIngress'), 'no'), not(contains(parameters('LicenseType'), 'NGTP'))), '8118', '')]",
+    "bootstrapScript64": "[base64(parameters('bootstrapScript'))]",
+    "allowUploadDownload": true,
+    "sicKey": "[parameters('sicKey')]",
+    "installationType": "wan",
+    "nvaName": "[parameters('NVA')]",
+    "osVersion": "[parameters('osVersion')]",
+    "hubPeers": "[join(parameters('hubPeers'), ',')]",
+    "vendor": "[concat('checkpoint', if(equals(parameters('LicenseType'), 'Full Package (NGTX and Smart-1 Cloud)'), '-ngtx', if(equals(parameters('LicenseType'), 'Full Package Premium (NGTX and Smart-1 Cloud Premium)'), '-premium', '')))]",
+    "nvaTotalInstances": "[if(contains('2 4 10 20', parameters('scaleUnit')), 2, if(equals('30', parameters('scaleUnit')), 3, if(equals('60', parameters('scaleUnit')), 4, 5)))]",
+    "resourceUri": "[resourceGroup().managedBy]",
+    "upgrading": "[parameters('upgrading')]",
+    "customLicenseType": "[parameters('customLicenseType')]",
+    "customLicenseType": "[parameters('customLicenseType')]",
+    "cloudConfigParams": [
+      "[concat('installationType=\"', variables('installationType'), '\"')]",
+      "[concat('setHealthProbe=\"', variables('healthProbe'), '\"')]",
+      "[concat('allowUploadDownload=\"', variables('allowUploadDownload'), '\"')]",
+      "[concat('osVersion=\"', variables('osVersion'), '\"')]",
+      "[concat('templateName=\"', variables('templateName'), '\"')]",
+      "[concat('isBlink=\"', variables('isBlink'), '\"')]",
+      "[concat('templateVersion=\"', variables('templateVersion'), '\"')]",
+      "[concat('bootstrapScript64=\"', variables('bootstrapScript64'), '\"')]",
+      "[concat('location=\"', variables('location'), '\"')]",
+      "[concat('sicKey=\"', variables('sicKey'), '\"')]",
+      "[concat('customMetrics=\"', variables('customMetrics'), '\"')]",
+      "[concat('adminShell=\"', parameters('adminShell'), '\"')]",
+      "[concat('asnHub=\"', parameters('hubASN'), '\"')]",
+      "[concat('peerIps=\"', variables('hubPeers'), '\"')]",
+      "[concat('asnNva=\"', parameters('BGP'), '\"')]",
+      "[concat('secondaryHealthProbe=\"', variables('secondaryHealthProbe'), '\"')]",
+      "[concat('smart1CloudToken0=\"', parameters('smart1CloudTokenA'), '\"')]",
+      "[concat('smart1CloudToken1=\"', parameters('smart1CloudTokenB'), '\"')]",
+      "[concat('smart1CloudToken2=\"', parameters('smart1CloudTokenC'), '\"')]",
+      "[concat('smart1CloudToken3=\"', parameters('smart1CloudTokenD'), '\"')]",
+      "[concat('smart1CloudToken4=\"', parameters('smart1CloudTokenE'), '\"')]",
+      "[concat('scaleUnits=\"', parameters('scaleUnit'), '\"')]",
+      "[concat('nvaTotalInstances=\"', variables('nvaTotalInstances'), '\"')]",
+      "[concat('upgrade=\"', variables('upgrading'), '\"')]",
+      "[concat('customLicenseType=\"', variables('customLicenseType'), '\"')]",
+      "[concat('resourceUri=\"', variables('resourceUri'), '\"')]",
+      "[concat('MaintenanceModePassword=\"', parameters('MaintenanceModePasswordHash'), '\"')]",
+      "[concat('passwordHash=\"', parameters('SerialConsolePasswordHash'), '\"')]"
+    ],
+    "noneString": "none",
+    "ipIngressNewName": "[concat(variables('nvaName'), '-ipIngress')]",
+    "ipIngressExistingResourceId": "[if(equals(parameters('publicIPIngress'), 'yes'), parameters('ipIngressExistingResourceId'), variables('noneString'))]",
+    "ipNewIngressId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ipIngressNewName'))]",
+    "publicIPNewIngressId": "[if(equals(parameters('publicIPIngress'), 'yes'), variables('ipNewIngressId'), json('null'))]",
+    "usepublicIPIngress": "[if(equals(parameters('createNewIPIngress'),'yes'), variables('publicIPNewIngressId'), variables('ipIngressExistingResourceId'))]",
+    "publicIPIngressObject": [{
+      "Id": "[variables('usepublicIPIngress')]"
+    }],
+    "emptyList": [],
+    "publicIPIngressProperty": "[if(equals(parameters('publicIPIngress'), 'yes'), variables('publicIPIngressObject'), variables('emptyList'))]",
+    "IngressDependsOn": "[if(equals(parameters('createNewIPIngress'), 'yes'), variables('publicIPNewIngressId'), variables('ipNewIngressId'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[parameters('managedIdentityName')]",
+      "location": "[parameters('location')]",
+      "apiVersion": "2023-01-31"
+    },
+    {
+      "type": "Microsoft.Network/networkVirtualAppliances",
+      "name": "[variables('nvaName')]",
+      "apiVersion": "2022-09-01",
+      "location": "[variables('location')]",
+      "tags": "[ if(contains(parameters('tags'), 'Microsoft.Network/networkVirtualAppliances'), parameters('tags')['Microsoft.Network/networkVirtualAppliances'], json('{}')) ]",
+      "properties": {
+        "nvaSku": {
+          "vendor": "[variables('vendor')]",
+          "bundledScaleUnit": "[parameters('scaleUnit')]",
+          "marketPlaceVersion": "[parameters('imageVersion')]"
+        },
+        "virtualHub": {
+          "id": "[parameters('hubId')]"
+        },
+        "virtualApplianceAsn": "[parameters('BGP')]",
+        "cloudInitConfiguration": "[concat('#!/usr/bin/python3 /etc/cloud_config.py\n', '\n', join(variables('cloudConfigParams'), '\n'), '\n')]",
+        "SSHPublicKey": "[parameters('sshPublicKey')]",
+        "internetIngressPublicIps": "[variables('publicIPIngressProperty')]"
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]": {}
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('managedIdentityName'))]",
+        "[variables('IngressDependsOn')]"
+      ]
+    },
+    {
+      "condition": "[and(equals(parameters('createNewIPIngress'), 'yes'), equals(parameters('publicIPIngress'), 'yes'))]",
+      "apiVersion": "2020-08-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('ipIngressNewName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
+      }
+    }
+  ],
+  "outputs": {}
+}

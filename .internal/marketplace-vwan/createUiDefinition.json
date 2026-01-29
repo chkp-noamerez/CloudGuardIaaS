@@ -1,0 +1,641 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+  "handler": "Microsoft.Azure.CreateUIDef",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "basics": [
+      {
+        "name": "Admin Guide",
+        "type": "Microsoft.Common.InfoBox",
+        "visible": true,
+        "options": {
+          "icon": "info",
+          "text": "For more information about configuring Check Point's NVA, read the administration guide",
+          "uri": "https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_Network_for_Azure_vWAN/Default.htm"
+        }
+      },
+      {
+        "name": "Contact Us",
+        "type": "Microsoft.Common.InfoBox",
+        "visible": true,
+        "options": {
+          "icon": "info",
+          "uri": "https://www.checkpoint.com/about-us/contact-us/",
+          "text": "Thank you for choosing Check Point to secure your Azure Virtual WAN environment; The integration of the Check Point products with your Azure Virtual WAN must be coordinated in advance with a Check Point representative. Please contact your designated Check Point representative, or if you do not have one, use this link."
+        }
+      }
+    ],
+    "steps": [
+      {
+        "name": "managed_identity",
+        "label": "Managed Identity",
+        "subLabel": {
+          "preValidation": "Set Managed Identity",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "Managed Identity",
+        "elements": [
+          {
+            "name": "managedIdentity",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "info",
+              "text": "According to the Azure RBAC security model, a managed identity is required for the managed application to deploy a Network Virtual Appliance (NVA).\nThe managed Identity must have the following permissions:\n\n1.\tMicrosoft.Network/virtualHubs/read on the hub that the NVA is being created on.\n2.\tMicrosoft.Network/publicIPAddresses/join/action only if a Public IP is being attached for internet ingress."
+            }
+          },
+          {
+            "name": "appIdentity",
+            "type": "Microsoft.ManagedIdentity.IdentitySelector",
+            "label": "Managed Identity Configuration",
+            "toolTip": "User assigned managed identities enable Azure resources to authenticate to cloud services (e.g. Azure Key Vault) without storing credentials in code. This type of managed identities are created as standalone Azure resources, and have their own lifecycle. A single resource (e.g. Virtual Machine) can utilize multiple user assigned managed identities. Similarly, a single user assigned managed identity can be shared across multiple resources (e.g. Virtual Machine). Learn more about Managed identities.",
+            "defaultValue": {
+              "systemAssignedIdentity": "Off"
+            },
+            "options": {
+              "hideSystemAssignedIdentity": true,
+              "hideUserAssignedIdentity": false
+            },
+            "visible": true
+          }
+        ]
+      },
+      {
+        "name": "chkp",
+        "label": "CloudGuard NVA configurations",
+        "subLabel": {
+          "preValidation": "Configure CloudGuard WAN settings",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "CloudGuard WAN settings",
+        "elements": [
+          {
+            "name": "InfoAzureAdminGuide",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "true",
+            "options": {
+              "icon": "Info",
+              "text": "See <a href='https://sc1.checkpoint.com/documents/IaaS/WebAdminGuides/EN/CP_CloudGuard_Network_for_Azure_vWAN/Default.htm' target='_blank'>CloudGuard Network for Azure administration guide</a> for detailed deployment and configuration steps"
+            }
+          },
+          {
+            "name": "hub",
+            "defaultValue": "",
+            "type": "Microsoft.Solutions.ResourceSelector",
+            "label": "Virtual WAN Hub",
+            "toolTip": "Select the Virtual WAN Hub to deploy CGNS NVA",
+            "resourceType": "Microsoft.Network/virtualHubs",
+            "options": {
+              "filter": {
+                "subscription": "onBasics",
+                "location": "onBasics"
+              }
+            },
+            "visible": true
+          },
+          {
+            "name": "NVA",
+            "type": "Microsoft.Common.TextBox",
+            "label": "NVA name",
+            "toolTip": "Select the NVA name to deploy in the hub",
+            "constraints": {
+              "required": true,
+              "validations": [
+                {
+                  "regex": "^[a-zA-Z0-9-]{3,32}$",
+                  "message": "Name can only contain letters, numbers and dashes, and be between 3 and 32 characters."
+                }
+              ]
+            }
+          },
+          {
+            "name": "Infodeploymentunit",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('chkp').allowSmart1CloudConnection, 'yes')]",
+            "options": {
+              "icon": "Info",
+              "text": "Deployment may fail if there are more instances than the hub allows, if that is the case try to decrease the instance count, delete unused NVAs or use a different hub."
+            }
+          },
+          {
+            "name": "scaleUnit",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Scale unit",
+            "defaultValue": "2 Scale Units - NGTP 2.4 Gbps",
+            "toolTip": "The scale unit determines the size and number of resources deployed. The higher the scale unit, the greater the amount of traffic that can be handled.",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "2 Scale Units - NGTP 2.4 Gbps",
+                  "value": "2"
+                },
+                {
+                  "label": "4 Scale Units - NGTP 5 Gbps",
+                  "value": "4"
+                },
+                {
+                  "label": "10 Scale Units - NGTP 8 Gbps",
+                  "value": "10"
+                },
+                {
+                  "label": "20 Scale Units - NGTP 16 Gbps",
+                  "value": "20"
+                },
+                {
+                  "label": "30 Scale Units - NGTP 24 Gbps",
+                  "value": "30"
+                },
+                {
+                  "label": "60 Scale Units - NGTP 32 Gbps",
+                  "value": "60"
+                },
+                {
+                  "label": "80 Scale Units - NGTP 40 Gbps",
+                  "value": "80"
+                }
+              ],
+              "required": true
+            },
+            "visible": true
+          },
+          {
+            "name": "cloudGuardVersion",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Version",
+            "defaultValue": "R82",
+            "toolTip": "Check Point Recommended version for all deployments is R82",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "R81.10",
+                  "value": "R8110"
+                },
+                {
+                  "label": "R81.20",
+                  "value": "R8120"
+                },
+                {
+                  "label": "R82",
+                  "value": "R82"
+                },
+                {
+                  "label": "R82.10",
+                  "value": "R82.10"
+                }
+              ]
+            }
+          },
+          {
+            "name": "R81Offer",
+            "type": "Microsoft.Common.DropDown",
+            "label": "License type",
+            "toolTip": "The type of license.",
+            "defaultValue": "Security Enforcement (NGTP)",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Security Enforcement (NGTP)",
+                  "value": "Security Enforcement (NGTP)"
+                },
+                {
+                  "label": "Full Package (NGTX and Smart-1 Cloud)",
+                  "value": "Full Package (NGTX and Smart-1 Cloud)"
+                },
+                {
+                  "label": "Full Package Premium (NGTX and Smart-1 Cloud Premium)",
+                  "value": "Full Package Premium (NGTX and Smart-1 Cloud Premium)"
+                }
+
+              ]
+            }
+          },
+          {
+            "name": "auth",
+            "type": "Microsoft.Compute.CredentialsCombo",
+            "label": {
+              "authenticationType": "Authentication type",
+              "password": "Password",
+              "confirmPassword": "Confirm password",
+              "sshPublicKey": "SSH public key"
+            },
+            "toolTip": {
+              "sshPublicKey": "Paste an OpenSSH public key. You can generate a key pair using ssh-keygen (Linux, OS X, Cygwin) or PuttyGen (Windows)"
+            },
+            "constraints": {
+              "required": true
+            },
+            "options": {
+              "hidePassword": true,
+              "hideConfirmation": false
+            },
+            "osPlatform": "Linux",
+            "visible": true
+          },
+          {
+            "name": "sicKeyUi",
+            "type": "Microsoft.Common.PasswordBox",
+            "label": {
+              "password": "SIC Key",
+              "confirmPassword": "Confirm SIC Key"
+            },
+            "toolTip": "Set the Secure Internal Communication one time secret used to set up trust between the gateway and the management server.",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-z0-9A-Z]{12,30}$",
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 12-30 characters long."
+            },
+            "options": {
+              "hideConfirmation": false
+            }
+          },
+          {
+            "name": "SerialPasswordInfoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "Info",
+              "text": "Check Point recommends setting serial console password and maintenance-mode password for recovery purposes.      For R81.10 and below the serial console password is used also as maintenance-mode password. Note: In Azure Virtual Wan there is currently no serial console on the Network Virtual Appliance, the serial console password will be used as a maintenance mode password in R81.10 and below."
+            }
+          },
+          {
+            "name": "EnableSerialConsolePassword",
+            "type": "Microsoft.Common.OptionsGroup",
+            "visible": true,
+            "label": "Enable Serial console password",
+            "defaultValue": "No",
+            "toolTip": "A unique password hash to enable VM connection via serial console.",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Yes",
+                  "value": true
+                },
+                {
+                  "label": "No",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "AdditionalPassword",
+            "type": "Microsoft.Common.PasswordBox",
+            "toolTip": "Serial console password hash, used to enable password authentication (using serial console). To generate password hash use the command 'openssl passwd -6 PASSWORD'",
+            "visible": "[steps('chkp').EnableSerialConsolePassword]",
+            "label": {
+              "password": "Password hash",
+              "confirmPassword": "Confirm password"
+            },
+            "constraints": {
+              "required": true,
+              "regex": "^.{12,300}$",
+              "validationMessage": "The value must be the output of the hash command."
+            },
+            "options": {
+              "hideConfirmation": false
+            }
+          },
+          {
+            "name": "MaintenanceModeInfoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[not(contains('R8110', steps('chkp').cloudGuardVersion))]",
+            "options": {
+              "icon": "Info",
+              "text": "Check Point recommends setting a maintenance-mode password for recovery purposes."
+            }
+          },
+          {
+            "visible": "[not(contains('R8110', steps('chkp').cloudGuardVersion))]",
+            "name": "MaintenanceModePassword",
+            "type": "Microsoft.Common.PasswordBox",
+            "defaultValue": "",
+            "toolTip": "To generate a password hash use the command 'grub2-mkpasswd-pbkdf2' on Linux and paste it here.",
+            "label": {
+              "password": "Maintenance Mode password hash",
+              "confirmPassword": "Confirm Password"
+            },
+            "constraints": {
+              "validationMessage": "The value must be the output of the hash command."
+            },
+            "options": {
+              "hideConfirmation": false
+            }
+          },
+          {
+            "name": "allowSmart1CloudConnection",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Quick connect to Smart-1 Cloud",
+            "defaultValue": "Yes",
+            "toolTip": "Automatically connect this Cluster to Smart-1 Cloud - Check Point's Security Management as a Service",
+             "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                },
+                {
+                  "label": "No",
+                  "value": "no"
+                }
+              ]
+            },
+            "visible": true
+          },
+          {
+            "name": "InfoS1C",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('chkp').allowSmart1CloudConnection, 'yes')]",
+            "options": {
+              "icon": "Info",
+              "text": "Follow these instructions to quickly connect this Cluster to Smart-1 Cloud <br><a href='https://support.checkpoint.com/results/sk/sk180501' target='_blank'>sk180501-Connecting CloudGuard Network Security Public Cloud Gateway to Smart-1 Cloud</a>."
+            }
+          },
+          {
+            "name": "Smart1CloudTokenA",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Smart-1 Cloud Token for Instance 0",
+            "toolTip": "Paste here the token copied from the Connect Gateway (Instance 0) screen in Smart-1 Cloud portal",
+            "constraints": {
+              "required": true,
+              "regex": "[\\S\\s]{5,}",
+              "validationMessage": "Smart1Cloud Token Should contain at lease 5 characters"
+            },
+            "visible": "[equals(steps('chkp').allowSmart1CloudConnection, 'yes')]"
+          },
+          {
+            "name": "Smart1CloudTokenB",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Smart-1 Cloud Token for Instance 1",
+            "toolTip": "Paste here the token copied from the Connect Gateway (Instance 1) screen in Smart-1 Cloud portal",
+            "constraints": {
+              "required": true,
+              "regex": "[\\S\\s]{5,}",
+              "validationMessage": "Smart1Cloud Token Should contain at lease 5 characters"
+            },
+            "visible": "[equals(steps('chkp').allowSmart1CloudConnection, 'yes')]"
+          },
+          {
+            "name": "Smart1CloudTokenC",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Smart-1 Cloud Token for Instance 2",
+            "toolTip": "Paste here the token copied from the Connect Gateway (Instance 2) screen in Smart-1 Cloud portal",
+            "constraints": {
+              "required": true,
+              "regex": "[\\S\\s]{5,}",
+              "validationMessage": "Smart1Cloud Token Should contain at lease 5 characters"
+            },
+            "visible": "[and(equals(steps('chkp').allowSmart1CloudConnection, 'yes'), or(equals(steps('chkp').scaleUnit, '30'), equals(steps('chkp').scaleUnit, '40'), equals(steps('chkp').scaleUnit, '60'), equals(steps('chkp').scaleUnit, '80')))]"
+          },
+          {
+            "name": "Smart1CloudTokenD",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Smart-1 Cloud Token for Instance 3",
+            "toolTip": "Paste here the token copied from the Connect Gateway (Instance 3) screen in Smart-1 Cloud portal",
+            "constraints": {
+              "required": true,
+              "regex": "[\\S\\s]{5,}",
+              "validationMessage": "Smart1Cloud Token Should contain at lease 5 characters"
+            },
+            "visible": "[and(equals(steps('chkp').allowSmart1CloudConnection, 'yes'), or(equals(steps('chkp').scaleUnit, '60'), equals(steps('chkp').scaleUnit, '80')))]"
+          },
+          {
+            "name": "Smart1CloudTokenE",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Smart-1 Cloud Token for Instance 4",
+            "toolTip": "Paste here the token copied from the Connect Gateway (Instance 4) screen in Smart-1 Cloud portal",
+            "constraints": {
+              "required": true,
+              "regex": "[\\S\\s]{5,}",
+              "validationMessage": "Smart1Cloud Token Should contain at lease 5 characters"
+            },
+            "visible": "[and(equals(steps('chkp').allowSmart1CloudConnection, 'yes'), equals(steps('chkp').scaleUnit, '80'))]"
+          }
+        ]
+      },
+      {
+        "name": "cgns",
+        "label": "CloudGuard Advanced Settings",
+        "subLabel": {
+          "preValidation": "Configure CloudGuard settings",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "CloudGuard settings",
+        "elements": [
+          {
+            "name": "InfoAdvanced",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "true",
+            "options": {
+              "icon": "Info",
+              "text": "This section includes OPTIONAL advanced configuration.\nTo proceed with Check Point default settings, click Next"
+            }
+          },
+          {
+            "name": "adminShell",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Default shell for the admin user",
+            "defaultValue": "/etc/cli.sh",
+            "toolTip": "The default shell for the admin user",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "/etc/cli.sh",
+                  "value": "/etc/cli.sh"
+                },
+                {
+                  "label": "/bin/bash",
+                  "value": "/bin/bash"
+                },
+                {
+                  "label": "/bin/csh",
+                  "value": "/bin/csh"
+                },
+                {
+                  "label": "/bin/tcsh",
+                  "value": "/bin/tcsh"
+                }
+              ]
+            }
+          },
+          {
+            "name": "BGP",
+            "type": "Microsoft.Common.TextBox",
+            "label": "BGP ASN",
+            "toolTip": "BGP ASN 64512 to 65534 excluding 65515, 65520.",
+            "defaultValue": "64512",
+            "constraints": {
+              "regex": "(?!65515|65520)(6451[2-9]|645[2-9][0-9]|64[6-9][0-9]{2}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-4])",
+              "validationMessage": "Only numbers between 64512 to 65534 are allowed excluding 65515, 65520."
+            },
+            "visible": true
+          },
+          {
+            "name": "bootstrapScript",
+            "type": "Microsoft.Common.FileUpload",
+            "label": "Bootstrap script",
+            "toolTip": "An optional script to run on the initial boot",
+            "constraints": {
+              "required": false,
+              "accept": ".sh,text/plain"
+            },
+            "options": {
+              "multiple": false,
+              "uploadMode": "file",
+              "openMode": "text",
+              "encoding": "UTF-8"
+            }
+          },
+          {
+            "name": "publicIPIngress",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Use public IP for ingress (public preview)",
+            "defaultValue": "No",
+            "toolTip": "Use public IP for ingress traffic (public preview)",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "No",
+                  "value": "no"
+                },
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                }
+              ]
+            },
+            "visible": true
+          },
+          {
+            "name": "createNewIPIngress",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Create new public IP for ingress traffic",
+            "defaultValue": "No",
+            "toolTip": "Create new public IP to use for ingress traffic",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "No",
+                  "value": "no"
+                },
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                }
+              ]
+            },
+            "visible": "[equals(steps('cgns').publicIPIngress, 'yes')]"
+          },
+          {
+            "name": "ipIngressExistingResourceId",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Public IP resource ID",
+            "defaultValue": "",
+            "toolTip": "Use an existing Public IP resource ID of Standard SKU. This IP should be in the same region and subscription as the hub, and must not be linked to any other resources",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-z0-9A-Z -.:/_n]{1,}$",
+              "validationMessage": "Only alphanumeric characters, hyphens, spaces, periods, and colons are allowed."
+            },
+            "visible": "[equals(steps('cgns').createNewIPIngress, 'no')]"
+          },
+          {
+            "name": "upgrading",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Are you upgrading your CloudGuard NVA deployment?",
+            "defaultValue": "No",
+            "toolTip": "Select 'Yes' if you are upgrading your CloudGuard NVA deployment.",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "No",
+                  "value": "no"
+                },
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                }
+              ]
+            }
+          },
+          {
+            "name": "upgradeInfoBox",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('cgns').upgrading, 'yes')]",
+            "options": {
+              "icon": "Warning",
+              "text": "Note that usage metering is applied on both origin and target NVA deployments.\nSee the Deployment Guide for more information."
+            }
+          },
+          {
+            "name": "hubObj",
+            "type": "Microsoft.Solutions.ArmApiControl",
+            "request": {
+              "method": "GET",
+              "path": "[concat(steps('chkp').hub.id, '?api-version=2020-05-01')]"
+            }
+          },
+          {
+            "name": "imageVersions",
+            "type": "Microsoft.Solutions.ArmApiControl",
+            "request": {
+              "method": "GET",
+              "path": "[concat(subscription().id, '/providers/Microsoft.Network/networkVirtualApplianceSKUs/checkpoint', if(equals(steps('chkp').R81Offer, 'Full Package (NGTX and Smart-1 Cloud)'), '-ngtx', if(equals(steps('chkp').R81Offer, 'Full Package Premium (NGTX and Smart-1 Cloud Premium)'), '-premium', '')) , '?api-version=2020-05-01')]"
+            }
+          }
+        ]
+      },
+      {
+        "name": "tags",
+        "label": "Tags",
+        "elements": [
+          {
+            "name": "InfoTags",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "true",
+            "options": {
+              "icon": "Info",
+              "text": "Check Point automatically configures all tags required by the solution\nOPTIONAL: Additional tags can be added below"
+            }
+          },
+          {
+            "name": "tagsByResource",
+            "toolTip": "(Optional) Add tags that will be added to the deployed resources",
+            "type": "Microsoft.Common.TagsByResource",
+            "resources": [
+              "Microsoft.Network/networkVirtualAppliances"
+            ]
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "scaleUnit": "[steps('chkp').scaleUnit]",
+      "BGP": "[steps('cgns').BGP]",
+      "sshPublicKey": "[steps('chkp').auth.sshPublicKey]",
+      "hubId": "[steps('chkp').hub.id]",
+      "NVA": "[steps('chkp').NVA]",
+      "location": "[location()]",
+      "osVersion": "[replace(steps('chkp').cloudGuardVersion, '.', '')]",
+      "LicenseType": "[coalesce(steps('chkp').R81Offer, 'Security Enforcement (NGTP)')]",
+      "imageVersion": "[last(filter(steps('cgns').imageVersions.properties.availableVersions, (item) => startsWith(item, substring(replace(steps('chkp').cloudGuardVersion, '.', ''), 1, 4))))]",
+      "sicKey": "[steps('chkp').sicKeyUi]",
+      "bootstrapScript": "[steps('cgns').bootstrapScript]",
+      "adminShell": "[steps('cgns').adminShell]",
+      "hubASN": "[steps('cgns').hubObj.properties.virtualRouterAsn]",
+      "hubPeers": "[steps('cgns').hubObj.properties.virtualRouterIps]",
+      "tags": "[steps('tags').tagsByResource]",
+      "smart1CloudTokenA": "[steps('chkp').Smart1CloudTokenA]",
+      "smart1CloudTokenB": "[steps('chkp').Smart1CloudTokenB]",
+      "smart1CloudTokenC": "[steps('chkp').Smart1CloudTokenC]",
+      "smart1CloudTokenD": "[steps('chkp').Smart1CloudTokenD]",
+      "smart1CloudTokenE": "[steps('chkp').Smart1CloudTokenE]",
+      "publicIPIngress": "[steps('cgns').publicIPIngress]",
+      "createNewIPIngress": "[steps('cgns').createNewIPIngress]",
+      "upgrading": "[steps('cgns').upgrading]",
+      "ipIngressExistingResourceId": "[steps('cgns').ipIngressExistingResourceId]",
+      "managedIdentity": "[steps('managed_identity').appIdentity]",
+      "SerialConsolePasswordHash": "[steps('chkp').AdditionalPassword]",
+      "MaintenanceModePasswordHash": "[steps('chkp').MaintenanceModePassword]"
+    }
+  }
+}

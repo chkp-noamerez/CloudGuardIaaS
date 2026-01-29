@@ -5,7 +5,7 @@ import subprocess
 import os
 
 
-IGNORE_FOLDERS = ['.git', '.idea', 'icons', 'scripts', 'nestedtemplates', 'testdrive-r8010', 'marketplace-checkme',
+IGNORE_FOLDERS = ['.vscode', '.git', '.idea', 'icons', 'scripts', 'nestedtemplates', 'testdrive-r8010', 'marketplace-checkme',
                   'marketplace-cluster', 'marketplace-shift', 'marketplace-single-waap', 'marketplace-stack-ha',
                   'marketplace-stack-management', 'marketplace-stack-single', 'marketplace-vmss-waap', 'deprecated',
                   '.spectral', 'china']

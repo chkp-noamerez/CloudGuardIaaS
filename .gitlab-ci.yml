@@ -221,5 +221,5 @@ upload_azure_templates_to_s3:
     -     lambda="${lambda}.prod"
     - fi
     - chmod +x .internal/azure_scripts/*
-    - python3 .internal/azure_scripts/build_all.py -b prod
+    - python3 .internal/azure_scripts/build_all.py -b qa
     - python3 .internal/azure_scripts/upload_templates.py --bucket ${bucket} --lambda-bucket ${lambda} --templates all

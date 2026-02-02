@@ -44,6 +44,28 @@
       },
       "defaultValue": "latest"
     },
+    "nicsNumber": {
+      "type": "int",
+      "defaultValue": 2,
+      "allowedValues": [
+        2,
+        3
+      ],
+      "metadata": {
+        "description": "Number of NICs to be created"
+      }
+    },
+    "extraNicIsPublicIp": {
+      "type": "string",
+      "allowedValues": [
+        "no",
+        "yes"
+      ],
+      "defaultValue": "no",
+      "metadata": {
+        "description": "Use public IP for addtional NIC"
+      }
+    },
     "scaleUnit": {
       "type": "string",
       "defaultValue": "2",
@@ -310,7 +332,8 @@
     }],
     "emptyList": [],
     "publicIPIngressProperty": "[if(equals(parameters('publicIPIngress'), 'yes'), variables('publicIPIngressObject'), variables('emptyList'))]",
-    "IngressDependsOn": "[if(equals(parameters('createNewIPIngress'), 'yes'), variables('publicIPNewIngressId'), variables('ipNewIngressId'))]"
+    "IngressDependsOn": "[if(equals(parameters('createNewIPIngress'), 'yes'), variables('publicIPNewIngressId'), variables('ipNewIngressId'))]",
+    "additionalNics": "[if(equals(parameters('nicsNumber'), 3), json(concat('[{\"name\":\"thirdnicipconfig\",\"hasPublicIp\":', if(equals(parameters('extraNicIsPublicIp'), 'yes'), 'true', 'false'), '}]')), json('null'))]"
   },
   "resources": [
     {
@@ -337,7 +360,8 @@
         "virtualApplianceAsn": "[parameters('BGP')]",
         "cloudInitConfiguration": "[concat('#!/usr/bin/python3 /etc/cloud_config.py\n', '\n', join(variables('cloudConfigParams'), '\n'), '\n')]",
         "SSHPublicKey": "[parameters('sshPublicKey')]",
-        "internetIngressPublicIps": "[variables('publicIPIngressProperty')]"
+        "internetIngressPublicIps": "[variables('publicIPIngressProperty')]",
+        "additionalNics": "[variables('additionalNics')]"
       },
       "identity": {
         "type": "UserAssigned",

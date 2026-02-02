@@ -94,6 +94,14 @@
             "visible": true
           },
           {
+            "name": "hubObj",
+            "type": "Microsoft.Solutions.ArmApiControl",
+            "request": {
+              "method": "GET",
+              "path": "[concat(steps('chkp').hub.id, '?api-version=2024-05-01')]"
+            }
+          },
+          {
             "name": "NVA",
             "type": "Microsoft.Common.TextBox",
             "label": "NVA name",
@@ -118,10 +126,100 @@
             }
           },
           {
+            "name": "cloudGuardVersion",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Version",
+            "defaultValue": "R82",
+            "toolTip": "Check Point Recommended version for all deployments is R82",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "R81.10",
+                  "value": "R8110"
+                },
+                {
+                  "label": "R81.20",
+                  "value": "R8120"
+                },
+                {
+                  "label": "R82",
+                  "value": "R82"
+                },
+                {
+                  "label": "R82.10",
+                  "value": "R8210"
+                }
+              ]
+            }
+          },
+          {
+            "name": "R81Offer",
+            "type": "Microsoft.Common.DropDown",
+            "label": "License type",
+            "toolTip": "The type of license.",
+            "defaultValue": "Security Enforcement (NGTP)",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "Security Enforcement (NGTP)",
+                  "value": "Security Enforcement (NGTP)"
+                },
+                {
+                  "label": "Full Package (NGTX and Smart-1 Cloud)",
+                  "value": "Full Package (NGTX and Smart-1 Cloud)"
+                },
+                {
+                  "label": "Full Package Premium (NGTX and Smart-1 Cloud Premium)",
+                  "value": "Full Package Premium (NGTX and Smart-1 Cloud Premium)"
+                }
+
+              ]
+            }
+          },
+          {
+            "name": "isSDWAN",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "SD-WAN",
+            "defaultValue": "No",
+            "toolTip": "Select if you want to enable SD-WAN",
+            
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "No",
+                  "value": "no"
+                },
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                }
+              ]
+            },
+            "visible": "[equals(steps('chkp').R81Offer, 'Full Package Premium (NGTX and Smart-1 Cloud Premium)')]"
+          },
+          {
+            "name": "hubCidrWarning",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[and(equals(steps('chkp').isSDWAN, 'yes'), greaterOrEquals(int(coalesce(last(split(steps('chkp').hubObj.properties.addressPrefix, '/')), '0')), 24))]",
+            "options": {
+              "icon": "Warning",
+              "text": "For SD-WAN full support your NVA will be deployed with 3 NICs which requires hub address space of at least /23.\nThe current hub address space does not meet this requirement.\nPlease use hub with larger address space.\nIf you need only 2 NICs you can go to \"CloudGuard advanced settings\" and change the number of NICs to 2"
+            }
+          },
+          {
+            "name": "InfoNicsNumberAndScaleUnit",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('chkp').isSDWAN, 'yes')]",
+            "options": {
+              "icon": "Info",
+              "text": "For SD-WAN full support your NVA will be deployed with 3 NICs.\nTo support that, the scale unit must be 10 or higher.\nThe default is 10 Scale Units - NGTP 8 Gbps."
+            }
+          },
+          {
             "name": "scaleUnit",
             "type": "Microsoft.Common.DropDown",
             "label": "Scale unit",
-            "defaultValue": "2 Scale Units - NGTP 2.4 Gbps",
+            "defaultValue": "[if(equals(steps('chkp').isSDWAN, 'yes'), '10 Scale Units - NGTP 8 Gbps', '2 Scale Units - NGTP 2.4 Gbps')]",
             "toolTip": "The scale unit determines the size and number of resources deployed. The higher the scale unit, the greater the amount of traffic that can be handled.",
             "constraints": {
               "allowedValues": [
@@ -157,57 +255,6 @@
               "required": true
             },
             "visible": true
-          },
-          {
-            "name": "cloudGuardVersion",
-            "type": "Microsoft.Common.DropDown",
-            "label": "Version",
-            "defaultValue": "R82",
-            "toolTip": "Check Point Recommended version for all deployments is R82",
-            "constraints": {
-              "allowedValues": [
-                {
-                  "label": "R81.10",
-                  "value": "R8110"
-                },
-                {
-                  "label": "R81.20",
-                  "value": "R8120"
-                },
-                {
-                  "label": "R82",
-                  "value": "R82"
-                },
-                {
-                  "label": "R82.10",
-                  "value": "R82.10"
-                }
-              ]
-            }
-          },
-          {
-            "name": "R81Offer",
-            "type": "Microsoft.Common.DropDown",
-            "label": "License type",
-            "toolTip": "The type of license.",
-            "defaultValue": "Security Enforcement (NGTP)",
-            "constraints": {
-              "allowedValues": [
-                {
-                  "label": "Security Enforcement (NGTP)",
-                  "value": "Security Enforcement (NGTP)"
-                },
-                {
-                  "label": "Full Package (NGTX and Smart-1 Cloud)",
-                  "value": "Full Package (NGTX and Smart-1 Cloud)"
-                },
-                {
-                  "label": "Full Package Premium (NGTX and Smart-1 Cloud Premium)",
-                  "value": "Full Package Premium (NGTX and Smart-1 Cloud Premium)"
-                }
-
-              ]
-            }
           },
           {
             "name": "auth",
@@ -581,6 +628,75 @@
               "method": "GET",
               "path": "[concat(subscription().id, '/providers/Microsoft.Network/networkVirtualApplianceSKUs/checkpoint', if(equals(steps('chkp').R81Offer, 'Full Package (NGTX and Smart-1 Cloud)'), '-ngtx', if(equals(steps('chkp').R81Offer, 'Full Package Premium (NGTX and Smart-1 Cloud Premium)'), '-premium', '')) , '?api-version=2020-05-01')]"
             }
+          },
+          {
+            "name": "InfoSDWAN",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": "[equals(steps('chkp').isSDWAN, 'yes')]",
+            "options": {
+              "icon": "Info",
+              "text": "To support overlay traffic over Express-Route and internet, please choose 3 NICs.\nIf you do not use express route, you can use 2 NICs."
+            }
+          },
+          {"name": "nicsNumber",
+          "type": "Microsoft.Common.DropDown",
+          "label": "Number of NICs",
+          "defaultValue": "[if(equals(steps('chkp').isSDWAN, 'yes'), '3 NICs', '2 NICs')]",
+          "toolTip": "The number of NICs to deploy. For SD-WAN the default is 3 NICs, for all other deployments the default is 2 NICs.",
+          "constraints": {
+            "allowedValues": [
+              {
+                "label": "2 NICs",
+                "value": 2
+              },
+              {
+                "label": "3 NICs",
+                "value": 3
+              }
+            ],
+            "required": true
+          },
+          "visible": true
+        },
+
+        {
+          "name": "addressSpaceCidr",
+          "type": "Microsoft.Common.TextBox",
+          "toolTip": "The CIDR of the hub address space. This is a read-only field that is automatically populated based on the selected hub.",
+          "label": "Hub address space CIDR (Read Only)",
+          "defaultValue": "[concat('/', coalesce(last(split(steps('chkp').hubObj.properties.addressPrefix, '/')), '0'))]",
+          "visible": "[equals(steps('cgns').nicsNumber, 3)]",
+          "readOnly": true,
+          "constraints": {
+            "required": true,
+            "validations": [
+              {
+                  "regex": "^/(?:[0-9]|1[0-9]|2[0-3])$",
+                  "message": "3 Nics deployments require a hub address space of /23 or larger.\nPlease go to \"CloudGuard NVA configurations\" and select a hub with larger address space.\nYou can also change the number of NICs to 2, but you won't be able to use all of the SD-WAN features."
+              }
+            ]
+          }
+        },
+        
+        {
+            "name": "extraNicIsPublicIp",
+            "type": "Microsoft.Common.OptionsGroup",
+            "label": "Use public IP for extra NIC",
+            "defaultValue": "No",
+            "toolTip": "Use public IP for extra NIC",
+            "constraints": {
+              "allowedValues": [
+                {
+                  "label": "No",
+                  "value": "no"
+                },
+                {
+                  "label": "Yes",
+                  "value": "yes"
+                }
+              ]
+            },
+            "visible": "[equals(steps('cgns').nicsNumber, 3)]"
           }
         ]
       },
@@ -609,6 +725,8 @@
       }
     ],
     "outputs": {
+      "nicsNumber": "[steps('cgns').nicsNumber]",
+      "extraNicIsPublicIp": "[steps('cgns').extraNicIsPublicIp]",
       "scaleUnit": "[steps('chkp').scaleUnit]",
       "BGP": "[steps('cgns').BGP]",
       "sshPublicKey": "[steps('chkp').auth.sshPublicKey]",

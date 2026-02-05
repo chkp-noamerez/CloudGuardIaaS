@@ -1628,7 +1628,7 @@
             "name": "lb-probe",
             "properties": {
               "protocol": "Tcp",
-              "port": 443,
+              "port": 8117,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }

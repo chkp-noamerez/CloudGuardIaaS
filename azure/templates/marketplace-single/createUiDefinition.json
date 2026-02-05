@@ -1563,7 +1563,7 @@
             "name": "enableIpv6",
             "type": "Microsoft.Common.OptionsGroup",
             "label": "Enable IPv6 Support",
-            "toolTip": "Enable IPv6 support. For a new Virtual Network you must provide IPv6 prefixes and static IPv6 NIC addresses; for an existing Virtual Network we do not modify the VNet or subnets and the static IPv6 NIC addresses you enter must already be valid in those existing subnet prefixes. An IPv6 public load balancer frontend and IPv6 NIC configurations will be created when enabled.",
+            "toolTip": "Enable IPv6 support. For a new Virtual Network you must provide IPv6 prefixes and static IPv6 NIC addresses; for an existing Virtual Network we do not modify the VNet or subnets and the static IPv6 NIC addresses you enter must already be valid in those existing subnet prefixes. An IPv6 public load balancer frontend and IPv6 NIC configurations will be created when enabled. For required configuration, see <a href='https://support.checkpoint.com/results/sk/sk170760' target='_blank'>sk170760</a>.",
             "defaultValue": "No (IPv4 only)",
             "constraints": {
               "allowedValues": [

@@ -60,6 +60,11 @@
     "NewNsgName": {
       "type": "string",
       "defaultValue": "[concat(parameters('vmName'),'-nsg')]"
+    },
+    "existingNsgId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": { "description": "Resource ID of existing NSG when deployNsg is false" }
     }
   },
   "variables": {
@@ -89,7 +94,8 @@
     "nsgName": "[concat(parameters('vmName'), '-nsg')]",
     "nsgProperties": {
       "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
-    }
+    },
+    "nsgIdForSubnets": "[if(parameters('deployNsg'), resourceId('Microsoft.Network/networkSecurityGroups', parameters('NewNsgName')), parameters('existingNsgId'))]"
   },
   "resources": [
     {
@@ -121,42 +127,6 @@
       "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/routeTables'), parameters('tagsByResource')['Microsoft.Network/routeTables'], json('{}')) ]"
     },
     {
-      "type": "Microsoft.Network/virtualNetworks",
-      "apiVersion": "2020-06-01",
-      "location": "[parameters('location')]",
-      "name": "[parameters('virtualNetworkName')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/routeTables', parameters('subnet1Name'))]",
-        "[resourceId('Microsoft.Network/routeTables', parameters('subnet2Name'))]"
-      ],
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": "[parameters('virtualNetworkAddressPrefixes')]"
-        },
-        "subnets": [
-          {
-            "name": "[parameters('subnet1Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnet1Prefix')]",
-              "routeTable": {
-                "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnet1Name'))]"
-              }
-            }
-          },
-          {
-            "name": "[parameters('subnet2Name')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]",
-              "routeTable": {
-                "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnet2Name'))]"
-              }
-            }
-          }
-        ]
-      },
-      "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/virtualNetworks'), parameters('tagsByResource')['Microsoft.Network/virtualNetworks'], json('{}')) ]"
-    },
-    {
       "type": "Microsoft.Network/networkSecurityGroups",
       "condition": "[parameters('deployNsg')]",
       "apiVersion": "2020-06-01",
@@ -181,6 +151,45 @@
         ]
       },
       "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/networkSecurityGroups'), parameters('tagsByResource')['Microsoft.Network/networkSecurityGroups'], json('{}')) ]"
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('location')]",
+      "name": "[parameters('virtualNetworkName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('subnet1Name'))]",
+        "[resourceId('Microsoft.Network/routeTables', parameters('subnet2Name'))]",
+        "[if(parameters('deployNsg'), resourceId('Microsoft.Network/networkSecurityGroups', parameters('NewNsgName')), resourceId('Microsoft.Network/routeTables', parameters('subnet1Name')))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": "[parameters('virtualNetworkAddressPrefixes')]"
+        },
+        "subnets": [
+          {
+            "name": "[parameters('subnet1Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnet1Prefix')]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnet1Name'))]"
+              },
+              "networkSecurityGroup": "[if(empty(variables('nsgIdForSubnets')), json('null'), createObject('id', variables('nsgIdForSubnets')))]"
+            }
+          },
+          {
+            "name": "[parameters('subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnet2Prefix')]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnet2Name'))]"
+              },
+              "networkSecurityGroup": "[if(empty(variables('nsgIdForSubnets')), json('null'), createObject('id', variables('nsgIdForSubnets')))]"
+            }
+          }
+        ]
+      },
+      "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/virtualNetworks'), parameters('tagsByResource')['Microsoft.Network/virtualNetworks'], json('{}')) ]"
     }
   ],
   "outputs": {

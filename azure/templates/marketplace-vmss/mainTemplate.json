@@ -1607,6 +1607,33 @@
       "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/publicIPAddresses'), parameters('tagsByResource')['Microsoft.Network/publicIPAddresses'], json('{}')) ]"
     },
     {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "condition": "[and(variables('dualstackNewVnet'), parameters('deployNewNSG'))]",
+      "apiVersion": "2020-06-01",
+      "location": "[variables('location')]",
+      "name": "[parameters('NewNsgName')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "AllowAllInBound",
+            "properties": {
+              "description": "Allow all inbound connections",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      },
+      "tags": "[ if(contains(parameters('tagsByResource'), 'Microsoft.Network/networkSecurityGroups'), parameters('tagsByResource')['Microsoft.Network/networkSecurityGroups'], json('{}')) ]"
+    },
+    
+    {
       "type": "Microsoft.Network/loadBalancers",
       "condition": "[variables('dualstackNewVnet')]",
       "apiVersion": "2020-06-01",
@@ -1995,9 +2022,6 @@
           "NewNsgName": {
             "value": "[parameters('NewNsgName')]"
           },
-          "existingNsgId": {
-            "value": "[if(parameters('deployNewNSG'), '', parameters('ExistingNSG').id)]"
-          },
           "tagsByResource": {
             "value": "[parameters('tagsByResource')]"
           }
@@ -2059,9 +2083,6 @@
           },
           "NewNsgName": {
             "value": "[parameters('NewNsgName')]" 
-          },
-          "existingNsgId": {
-            "value": "[if(parameters('deployNewNSG'), '', parameters('ExistingNSG').id)]"
           },
           "tagsByResource": {
             "value": "[parameters('tagsByResource')]"
@@ -2223,6 +2244,7 @@
         "[variables('vnetID')]",
         "[variables('storageAccountId')]",
         "[variables('customImageId')]",
+        "[variables('nsgDependency')]",
         "[variables('vmssDependsElbOrSetup')]",
         "[variables('vmssDependsIlbOrSetup')]",
         "[variables('vmssDependsElbV6OrVnet')]",
@@ -2266,6 +2288,7 @@
                   "primary": true,
                   "enableIPForwarding": true,
                   "enableAcceleratedNetworking": true,
+                  "networkSecurityGroup": "[if(parameters('deployNewNSG') , variables('NewNsgReference') , parameters('ExistingNSG'))]",
                   "copy": [
                     {
                       "name": "ipConfigurations",

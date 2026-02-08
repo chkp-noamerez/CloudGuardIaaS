@@ -2248,7 +2248,7 @@
       "virtualNetworkAddressPrefixV6": "[if(and(steps('network').enableIpv6, equals(steps('network').virtualNetwork.newOrExisting, 'new')), steps('network').ipv6Section.virtualNetworkIpv6AddressPrefix, '')]",
       "subnet1PrefixV6": "[if(and(steps('network').enableIpv6, equals(steps('network').virtualNetwork.newOrExisting, 'new')), steps('network').ipv6Section.subnet1Ipv6Prefix, '')]",
       "subnet2PrefixV6": "[if(and(steps('network').enableIpv6, equals(steps('network').virtualNetwork.newOrExisting, 'new')), steps('network').ipv6Section.subnet2Ipv6Prefix, '')]",
-      "ilbFrontendIPv6Address": "[if(not(steps('network').enableIpv6), '', if(equals(steps('network').virtualNetwork.newOrExisting, 'existing'), steps('network').ipv6Section.subnet2Ipv6StartAddress, concat(first(split('/', steps('network').ipv6Section.subnet2Ipv6Prefix)), 'a')))]",
+      "ilbFrontendIPv6Address": "[if(and(steps('network').enableIpv6, equals(steps('network').virtualNetwork.newOrExisting, 'existing')), steps('network').ipv6Section.subnet2Ipv6StartAddress, '')]",
       "floatingIP": "[steps('chkp-advanced').floatingIP]",
       "IPv4Length": "[steps('chkp-advanced').IPv4Length]",
       "publicIPPrefix": "[steps('chkp-advanced').publicIPPrefix]",
